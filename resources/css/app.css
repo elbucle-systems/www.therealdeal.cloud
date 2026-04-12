@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Chelsea+Market&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Saira+Stencil:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "./content.css";
+@import "./form.css";
+@import "./league.css";
+@import "./match.css";
+
+:root,
+.light {
+    --background: #e8f2ff;
+    --foreground: #030267;
+    --muted: #f3f8ff;
+    --primary-green: #059669;
+    --primary-green-hover: #047857;
+    --secondary-orange: #ea6c00;
+    --secondary-orange-hover: #d97706;
+}
+
+.dark {
+    --background: #02142d;
+    --foreground: #def8f3;
+    --muted: #051c3c;
+    --primary-green: #34d399;
+    --primary-green-hover: #6ee7b7;
+    --secondary-orange: #fb923c;
+    --secondary-orange-hover: #fdba74;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* Menu */
+
+.menu__container {
+    background-color: var(--muted);
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.menu {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1028px;
+    min-height: 90px;
+    font-family: "Chelsea Market", cursive;
+}
+
+.menu__nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 20px;
+    row-gap: 10px;
+}
+
+.nav__link {
+    text-decoration: none;
+    color: var(--foreground);
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+.nav__link:hover {
+    color: var(--background);
+    background-color: var(--foreground);
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.nav__link--button {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+}
+
+.nav__link--active {
+    color: var(--background);
+    background-color: var(--foreground);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.logo {
+    font-size: 36px;
+    color: var(--foreground);
+    text-decoration: none;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+}
+
+.theme-toggle__sun {
+    display: none;
+}
+
+html.dark .theme-toggle__moon {
+    display: none;
+}
+
+html.dark .theme-toggle__sun {
+    display: block;
+}
+
+@media screen and (max-width: 600px) {
+    /* Menu */
+    .menu {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
+
+    .menu__nav {
+        justify-content: center;
+    }
+
+    .nav__link {
+        font-size: 14px;
+    }
+
+    .logo {
+        font-size: 26px;
+    }
+
+    /* Form */
+    .form--wide {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+
+    /* Container */
+    .content {
+        padding: 20px 0;
+    }
+}

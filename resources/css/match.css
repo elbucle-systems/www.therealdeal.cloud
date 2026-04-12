@@ -1,0 +1,377 @@
+.matches {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    font-family: "Montserrat", sans-serif;
+}
+
+/* ── Group tab nav ─────────────────────────────────────────────────────────── */
+.match-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-bottom: 2px solid var(--foreground);
+    margin-bottom: 20px;
+}
+
+.match-tabs__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    row-gap: 4px;
+    padding: 4px 0;
+}
+
+.match-tabs__row:first-child {
+    border-bottom: 1px solid
+        color-mix(in srgb, var(--foreground) 15%, transparent);
+    padding-bottom: 6px;
+    margin-bottom: 2px;
+}
+
+.match-tabs__label {
+    font-family: "Chelsea Market", cursive;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    opacity: 0.4;
+    text-transform: uppercase;
+    padding: 0 6px 0 2px;
+    white-space: nowrap;
+    min-width: 68px;
+}
+
+.match-tab {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-family: "Chelsea Market", cursive;
+    color: var(--foreground);
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    opacity: 0.5;
+    border-radius: 4px 4px 0 0;
+    text-decoration: none;
+    transition:
+        opacity 0.15s ease,
+        background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.match-tab:hover {
+    opacity: 0.85;
+    background-color: var(--muted);
+}
+
+.match-tab--active {
+    opacity: 1;
+    border-bottom-color: var(--primary-green);
+    color: var(--primary-green);
+}
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+.match {
+    background-color: var(--muted);
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.match__header {
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.7;
+}
+
+.match__body {
+    background-color: var(--background);
+    padding: 10px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+}
+
+.match__team--a {
+    text-align: right;
+}
+
+.match__team--b {
+    text-align: left;
+}
+
+.match__team {
+    font-size: 24px;
+}
+
+.match__result {
+    display: flex;
+    gap: 2px;
+    letter-spacing: 2px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.match__group {
+    font-weight: 700;
+}
+
+.match__date {
+    letter-spacing: 1px;
+}
+
+.match__number {
+    font-weight: 600;
+}
+
+.match__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.match__footer {
+    display: flex;
+    flex-direction: column;
+}
+
+.predictions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.predictions__title {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.prediction {
+    font-size: 14px;
+    display: flex;
+    gap: 15px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background-color: var(--background);
+    align-items: center;
+}
+
+.prediction__result {
+    display: flex;
+    gap: 3px;
+}
+
+.prediction__separator {
+    font-weight: bold;
+}
+
+.prediction__input {
+    background-color: var(--muted);
+    border: var(--foreground) 1px solid;
+    color: var(--foreground);
+    width: 36px;
+    text-align: right;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.prediction__input:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 5px var(--primary-green);
+}
+
+.prediction__field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.prediction__error {
+    font-size: 10px;
+    color: var(--destructive, red);
+    font-size: 9px;
+    font-weight: bold;
+    width: 36px;
+    text-align: center;
+}
+
+.prediction__user {
+    font-size: 12px;
+    font-weight: 500;
+    width: 75px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.prediction__saved {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary-green);
+    animation: prediction-saved-fade 2s ease forwards;
+}
+
+@keyframes prediction-saved-fade {
+    0% {
+        opacity: 1;
+    }
+    60% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .matches {
+        padding: 0 10px;
+    }
+
+    .match {
+        width: 450px;
+        padding: 15px;
+    }
+
+    .match__header {
+        font-size: 13px;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Matches page wrapper
+   ------------------------------------------------------------------ */
+
+.matches-page {
+    max-width: 1028px;
+    margin: 0 auto;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-height: 550px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.matches-page__title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 28px;
+    margin: 0;
+    color: var(--foreground);
+}
+
+/* ------------------------------------------------------------------
+   Match group section
+   ------------------------------------------------------------------ */
+
+.match-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.match-group__title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 20px;
+    margin: 0;
+    color: var(--foreground);
+    border-bottom: 2px solid var(--foreground);
+    padding-bottom: 8px;
+    opacity: 0.75;
+}
+
+/* ------------------------------------------------------------------
+   Match header additions
+   ------------------------------------------------------------------ */
+
+.match__number {
+    font-family: "Saira Stencil", cursive;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    opacity: 0.55;
+}
+
+.match__deadline-hint {
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    opacity: 0.5;
+}
+
+.match__locked-badge {
+    font-family: "Saira Stencil", cursive;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    background-color: var(--secondary-orange);
+    color: #fff;
+    padding: 2px 9px;
+    border-radius: 20px;
+}
+
+/* ------------------------------------------------------------------
+   Match body additions
+   ------------------------------------------------------------------ */
+
+.match__vs {
+    font-family: "Saira Stencil", cursive;
+    font-size: 14px;
+    letter-spacing: 3px;
+    opacity: 0.4;
+}
+
+.match__score {
+    font-family: "Saira Stencil", cursive;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: var(--primary-green);
+}
+
+/* ------------------------------------------------------------------
+   Prediction input: hide number spinners, fix sizing
+   ------------------------------------------------------------------ */
+
+.prediction__input {
+    -moz-appearance: textfield;
+    padding: 2px 6px;
+    text-align: center;
+}
+
+.prediction__input::-webkit-inner-spin-button,
+.prediction__input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ------------------------------------------------------------------
+   Responsive additions
+   ------------------------------------------------------------------ */
+
+@media screen and (max-width: 600px) {
+    .matches-page {
+        padding: 20px 16px;
+    }
+
+    .matches-page__title {
+        font-size: 22px;
+    }
+}

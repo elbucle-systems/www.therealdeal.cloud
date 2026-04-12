@@ -1,0 +1,104 @@
+/* Container */
+.content {
+    max-width: 1028px;
+    margin: 0px auto;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 550px;
+    gap: 20px;
+}
+
+.content--centered {
+    align-items: center;
+    justify-content: center;
+}
+
+.content--centered-top {
+    align-items: center;
+}
+
+/* Profile */
+.profile {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    padding: 0 16px;
+}
+
+.profile__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: "Chelsea Market", cursive;
+}
+
+.profile__title {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+}
+
+.profile__cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+.profile__col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.profile__cards > * {
+    min-width: 0;
+}
+
+/* Remove the default form max-width so cards grow to fill the row */
+.profile__cards .form,
+.profile__col .form {
+    max-width: none;
+}
+
+.profile__info {
+    background-color: var(--muted);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-family: "Saira Stencil", cursive;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.3),
+        0 1px 2px -1px rgba(0, 0, 0, 0.3);
+}
+
+.profile__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.profile__info-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    opacity: 0.65;
+    white-space: nowrap;
+}
+
+.profile__info-value {
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    word-break: break-all;
+}

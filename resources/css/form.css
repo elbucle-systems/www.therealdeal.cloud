@@ -1,0 +1,128 @@
+/* Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+    font-family: "Saira Stencil", cursive;
+    background-color: var(--muted);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.3),
+        0 1px 2px -1px rgba(0, 0, 0, 0.3);
+}
+
+.form--wide {
+    max-width: 800px;
+}
+
+.form__title-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form__title {
+    margin: 0;
+    letter-spacing: 0.05em;
+}
+
+.form__subtitle {
+    margin: 0;
+}
+
+.form__content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form__label-content {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.form__label {
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 0.05em;
+}
+
+.form__input {
+    padding: 8px;
+    border: 1px solid var(--foreground);
+    background-color: var(--background);
+    color: var(--foreground);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: "Saira Stencil", cursive;
+    font-weight: bold;
+}
+
+.form__input::placeholder {
+    color: var(--foreground);
+    font-weight: normal;
+    opacity: 0.6;
+}
+
+.form__input:focus {
+    outline: none;
+    border: 2px solid var(--foreground);
+}
+
+.form__error {
+    color: var(--secondary-orange);
+    font-size: 14px;
+    margin: 0;
+}
+
+.form__success {
+    color: var(--primary-green);
+    font-size: 14px;
+    margin: 0;
+}
+
+.form__footer {
+    padding-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    align-items: center;
+}
+
+.form__link {
+    color: var(--foreground);
+    opacity: 0.8;
+}
+
+.form__button {
+    font-size: 16px;
+    padding: 10px 20px;
+    background-color: var(--primary-green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: "Saira Stencil", cursive;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+}
+
+.form__button:hover {
+    background-color: var(--primary-green-hover);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.form__button:disabled {
+    background-color: var(--secondary-orange);
+    color: var(--foreground);
+    cursor: not-allowed;
+}

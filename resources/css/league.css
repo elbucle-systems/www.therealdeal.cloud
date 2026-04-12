@@ -1,0 +1,828 @@
+/* ============================================================
+   league.css — League table feature styles
+   Uses the same CSS variables and design patterns as the app
+   ============================================================ */
+
+/* ------------------------------------------------------------------
+   League list page
+   ------------------------------------------------------------------ */
+
+.leagues {
+    max-width: 1028px;
+    margin: 0 auto;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-height: 550px;
+}
+
+.leagues__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.leagues__title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 28px;
+    margin: 0;
+    color: var(--foreground);
+}
+
+.leagues__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.leagues__section-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 20px;
+    margin: 0 0 16px 0;
+    color: var(--foreground);
+    border-bottom: 2px solid var(--foreground);
+    padding-bottom: 8px;
+    opacity: 0.75;
+}
+
+.leagues__empty {
+    font-family: "Montserrat", sans-serif;
+    color: var(--foreground);
+    opacity: 0.55;
+    font-size: 15px;
+    padding: 12px 0;
+}
+
+/* ------------------------------------------------------------------
+   League card
+   ------------------------------------------------------------------ */
+
+.league-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.league-card {
+    position: relative;
+    background-color: var(--muted);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    text-decoration: none;
+    color: var(--foreground);
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.12),
+        0 1px 2px -1px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.15s ease;
+    flex-wrap: wrap;
+    cursor: pointer;
+}
+
+.league-card--pending {
+    cursor: default;
+}
+
+.league-card__link {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+}
+
+.league-card:hover {
+    box-shadow:
+        0 4px 12px 0 rgba(0, 0, 0, 0.18),
+        0 2px 4px -1px rgba(0, 0, 0, 0.14);
+}
+
+.league-card__info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.league-card__name {
+    font-family: "Chelsea Market", cursive;
+    font-size: 20px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.league-card__meta {
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    opacity: 0.65;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.league-card__badges {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.league-card__code {
+    font-family: "Saira Stencil", cursive;
+    font-size: 13px;
+    font-weight: bold;
+    background-color: var(--secondary-orange);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.12em;
+}
+
+.league-card__status {
+    font-family: "Saira Stencil", cursive;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: var(--secondary-orange);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+}
+
+.league-card__manager-badge {
+    font-family: "Saira Stencil", cursive;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: var(--primary-green);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+}
+
+/* ------------------------------------------------------------------
+   League detail page
+   ------------------------------------------------------------------ */
+
+.league-detail {
+    max-width: 1028px;
+    margin: 0 auto;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-height: 550px;
+}
+
+.league-detail__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.league-detail__title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.league-detail__title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 32px;
+    margin: 0;
+    color: var(--foreground);
+}
+
+.league-detail__code-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.league-detail__code-label {
+    font-family: "Montserrat", sans-serif;
+    font-size: 13px;
+    opacity: 0.65;
+}
+
+.league-detail__code {
+    font-family: "Saira Stencil", cursive;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: var(--secondary-orange);
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.15s ease;
+}
+
+.league-detail__code:hover {
+    background-color: var(--secondary-orange-hover);
+}
+
+.league-detail__code-hint {
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.league-detail__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.league-detail__pending-notice {
+    background-color: var(--muted);
+    border-left: 4px solid var(--secondary-orange);
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    color: var(--foreground);
+}
+
+/* Settings summary */
+
+.league-settings {
+    background-color: var(--muted);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.league-settings__item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.league-settings__label {
+    font-family: "Saira Stencil", cursive;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    opacity: 0.6;
+    text-transform: uppercase;
+}
+
+.league-settings__value {
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+/* ------------------------------------------------------------------
+   Standings table
+   ------------------------------------------------------------------ */
+
+.standings {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.standings__section-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 20px;
+    margin: 0 0 12px 0;
+    color: var(--foreground);
+    border-bottom: 2px solid var(--foreground);
+    padding-bottom: 8px;
+    opacity: 0.75;
+}
+
+.standings__header,
+.standings__row {
+    display: grid;
+    grid-template-columns: 48px 1fr 90px 80px 80px;
+    align-items: center;
+    padding: 12px 18px;
+    gap: 8px;
+}
+
+.standings__header {
+    background-color: var(--foreground);
+    color: var(--background);
+    font-family: "Saira Stencil", cursive;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.standings__row {
+    background-color: var(--muted);
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    border-top: 1px solid var(--background);
+}
+
+.standings__row:first-of-type {
+    border-top: none;
+}
+
+.standings__rank {
+    font-weight: 800;
+    font-size: 16px;
+    font-family: "Saira Stencil", cursive;
+}
+
+.standings__username {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.standings__points {
+    color: var(--primary-green);
+    font-weight: 800;
+    font-size: 16px;
+    font-family: "Saira Stencil", cursive;
+    text-align: center;
+}
+
+.standings__stat {
+    text-align: center;
+    opacity: 0.75;
+    font-size: 13px;
+}
+
+.standings__empty {
+    background-color: var(--muted);
+    padding: 20px 18px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    opacity: 0.55;
+    text-align: center;
+}
+
+/* ------------------------------------------------------------------
+   Members management page
+   ------------------------------------------------------------------ */
+
+.members-page {
+    max-width: 1028px;
+    margin: 0 auto;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    min-height: 550px;
+}
+
+.members-page__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.members-page__title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 28px;
+    margin: 0;
+    color: var(--foreground);
+}
+
+.members__section-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 20px;
+    margin: 0 0 12px 0;
+    color: var(--foreground);
+    border-bottom: 2px solid var(--foreground);
+    padding-bottom: 8px;
+    opacity: 0.75;
+}
+
+.members__list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.members__row {
+    background-color: var(--muted);
+    border-radius: 10px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.08),
+        0 1px 2px -1px rgba(0, 0, 0, 0.08);
+}
+
+.members__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.members__username {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.members__joined {
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    opacity: 0.55;
+}
+
+.members__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.members__empty {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    opacity: 0.55;
+    padding: 10px 0;
+}
+
+/* ------------------------------------------------------------------
+   Shared button variants used in league pages
+   ------------------------------------------------------------------ */
+
+.btn {
+    font-family: "Saira Stencil", cursive;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.06em;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.btn--primary {
+    background-color: var(--primary-green);
+    color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+    background-color: var(--primary-green-hover);
+}
+
+.btn--secondary {
+    background-color: var(--foreground);
+    color: var(--background);
+}
+
+.btn--secondary:hover:not(:disabled) {
+    opacity: 0.85;
+}
+
+.btn--danger {
+    background-color: var(--secondary-orange);
+    color: #fff;
+}
+
+.btn--danger:hover:not(:disabled) {
+    background-color: var(--secondary-orange-hover);
+}
+
+.btn--ghost {
+    background-color: transparent;
+    color: var(--foreground);
+    border: 1.5px solid var(--foreground);
+}
+
+.btn--ghost:hover:not(:disabled) {
+    background-color: var(--foreground);
+    color: var(--background);
+}
+
+.btn--sm {
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
+/* ------------------------------------------------------------------
+   Back link
+   ------------------------------------------------------------------ */
+
+.back-link {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    color: var(--foreground);
+    text-decoration: none;
+    opacity: 0.7;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------
+   Responsive overrides
+   ------------------------------------------------------------------ */
+
+@media screen and (max-width: 600px) {
+    .leagues,
+    .league-detail,
+    .members-page {
+        padding: 20px 16px;
+    }
+
+    .leagues__title,
+    .league-detail__title,
+    .members-page__title {
+        font-size: 22px;
+    }
+
+    .standings__header,
+    .standings__row {
+        grid-template-columns: 36px 1fr 72px 64px 64px;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    .standings__points {
+        font-size: 13px;
+    }
+
+    .league-settings {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Now badge (effective date / override indicator)
+   ------------------------------------------------------------------ */
+
+.now-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background-color: var(--muted);
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+
+.now-badge--override {
+    background-color: #fff3cd;
+    color: #7a4800;
+    outline: 1.5px solid #f0ad4e;
+}
+
+.now-badge__label {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.65;
+}
+
+.now-badge--override .now-badge__label {
+    opacity: 1;
+}
+
+.now-badge__value {
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------------
+   Landing page
+   ------------------------------------------------------------------ */
+
+.landing {
+    max-width: 1028px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+.landing__hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+    padding: 40px 0;
+}
+
+.landing__headline {
+    font-family: "Chelsea Market", cursive;
+    font-size: 52px;
+    margin: 0;
+    line-height: 1.1;
+    color: var(--foreground);
+}
+
+.landing__headline--sm {
+    font-size: 36px;
+}
+
+.landing__accent {
+    color: var(--secondary-orange);
+}
+
+.landing__sub {
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    max-width: 600px;
+    opacity: 0.75;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.landing__cta-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn--lg {
+    font-size: 16px;
+    padding: 12px 28px;
+}
+
+.landing__section-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 28px;
+    margin: 0 0 32px 0;
+    color: var(--foreground);
+    text-align: center;
+}
+
+.landing__features {
+    display: flex;
+    flex-direction: column;
+}
+
+.landing__feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.landing__feature-card {
+    background-color: var(--muted);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.landing__feature-icon {
+    color: var(--primary-green);
+    display: flex;
+}
+
+.landing__feature-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 18px;
+    margin: 0;
+    color: var(--foreground);
+}
+
+.landing__feature-body {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    opacity: 0.7;
+    margin: 0;
+}
+
+.landing__steps {
+    display: flex;
+    flex-direction: column;
+}
+
+.landing__step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.landing__step {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.landing__step-number {
+    font-family: "Saira Stencil", cursive;
+    font-size: 28px;
+    color: #fff;
+    background-color: var(--secondary-orange);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.landing__step-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 18px;
+    margin: 0 0 6px 0;
+    color: var(--foreground);
+}
+
+.landing__step-body {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    opacity: 0.7;
+    margin: 0;
+}
+
+.landing__bottom-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 60px 20px;
+    background-color: var(--muted);
+    border-radius: 16px;
+    text-align: center;
+}
+
+@media screen and (max-width: 600px) {
+    .landing {
+        padding: 40px 16px;
+        gap: 56px;
+    }
+
+    .landing__headline {
+        font-size: 36px;
+    }
+
+    .landing__headline--sm {
+        font-size: 26px;
+    }
+
+    .landing__sub {
+        font-size: 15px;
+    }
+
+    .landing__feature-grid {
+        grid-template-columns: 1fr;
+    }
+}

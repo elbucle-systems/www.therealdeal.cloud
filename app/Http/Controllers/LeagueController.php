@@ -1,0 +1,497 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Data\WcMatches;
+use App\Models\League;
+use App\Models\MatchPrediction;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
+class LeagueController extends Controller
+{
+    // ─── Helpers ─────────────────────────────────────────────────────────────
+
+    private function generateUniqueCode(): string
+    {
+        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        for ($attempt = 0; $attempt < 10; $attempt++) {
+            $code = '';
+            for ($i = 0; $i < 6; $i++) {
+                $code .= $chars[random_int(0, strlen($chars) - 1)];
+            }
+            if (!League::where('unique_code', $code)->exists()) {
+                return $code;
+            }
+        }
+        throw new \RuntimeException('Could not generate a unique league code after 10 attempts');
+    }
+
+    private function outcomeSign(int $a, int $b): int
+    {
+        if ($a > $b) return 1;
+        if ($a < $b) return -1;
+        return 0;
+    }
+
+    private function computeStandings(League $league, $approvedMembers = null): array
+    {
+        $now = now();
+
+        if ($approvedMembers === null) {
+            $approvedMembers = $league->members()
+                ->where('status', 'approved')
+                ->with('user:id,username')
+                ->get();
+        }
+
+        if ($approvedMembers->isEmpty()) {
+            return [];
+        }
+
+        // Scope to this league via FK — avoids cross-league contamination
+        $predictions = MatchPrediction::where('league_id', $league->id)->get();
+
+        // Build lookup: username → matchId → prediction
+        $predMap = [];
+        foreach ($predictions as $pred) {
+            $predMap[$pred->username][$pred->match_id] = $pred;
+        }
+
+        $pointsPerScore  = $league->points_per_score;
+        $pointsPerResult = $league->points_per_result;
+
+        $playedMatches = array_filter(
+            WcMatches::all(),
+            fn($m) => strtotime($m['date']) < $now->timestamp
+                && $m['teamAGoals'] !== null
+                && $m['teamBGoals'] !== null
+        );
+
+        $standings = [];
+        foreach ($approvedMembers as $member) {
+            $username         = $member->user->username;
+            $totalPoints      = 0;
+            $exactScoreCount  = 0;
+            $correctResultCount = 0;
+
+            foreach ($playedMatches as $match) {
+                $pred = $predMap[$username][$match['id']] ?? null;
+                if (!$pred) continue;
+
+                $exactScore = $pred->predicted_score_a === $match['teamAGoals']
+                    && $pred->predicted_score_b === $match['teamBGoals'];
+
+                $correctResult = $this->outcomeSign($pred->predicted_score_a, $pred->predicted_score_b)
+                    === $this->outcomeSign($match['teamAGoals'], $match['teamBGoals']);
+
+                if ($exactScore) {
+                    $totalPoints += $pointsPerScore;
+                    $exactScoreCount++;
+                } elseif ($correctResult) {
+                    $totalPoints += $pointsPerResult;
+                    $correctResultCount++;
+                }
+            }
+
+            $standings[] = [
+                'user_id'             => $member->user_id,
+                'username'            => $username,
+                'total_points'        => $totalPoints,
+                'exact_score_count'   => $exactScoreCount,
+                'correct_result_count' => $correctResultCount,
+            ];
+        }
+
+        usort($standings, fn($a, $b) => $b['total_points'] <=> $a['total_points']);
+
+        return $standings;
+    }
+
+    // ─── Index ────────────────────────────────────────────────────────────────
+
+    public function index()
+    {
+        $userId = Auth::id();
+
+        /** @var \App\Models\User $authUser */
+        $authUser    = Auth::user();
+        $memberships = $authUser->leagueMembers()
+            ->with(['league' => fn($q) => $q->withCount(['members as member_count' => fn($q) => $q->where('status', 'approved')])])
+            ->get();
+
+        $leagues = $memberships->map(function ($m) use ($userId) {
+            $league = $m->league;
+            $league->member_status = $m->status;
+            return $league;
+        });
+
+        $managing = $leagues->filter(fn($l) => $l->manager_id === $userId)->values();
+        $memberOf = $leagues->filter(fn($l) => $l->manager_id !== $userId)->values();
+
+        return view('leagues.index', compact('managing', 'memberOf'));
+    }
+
+    // ─── Create ───────────────────────────────────────────────────────────────
+
+    public function create()
+    {
+        return view('leagues.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'name'                           => ['required', 'string', 'min:3', 'max:100', 'unique:leagues,name'],
+            'points_per_score'               => ['required', 'integer', 'min:0'],
+            'points_per_result'              => ['required', 'integer', 'min:0'],
+            'predictions_visible_before_game' => ['sometimes', 'boolean'],
+            'members_size_limit'             => ['nullable', 'integer', 'min:2'],
+            'grouped_deadline'               => ['sometimes', 'boolean'],
+            'deadline_days'                  => ['required', 'integer', 'min:0'],
+        ]);
+
+        $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
+        $data['grouped_deadline']                = $request->boolean('grouped_deadline');
+        $data['manager_id']                      = Auth::id();
+        $data['unique_code']                     = $this->generateUniqueCode();
+
+        $league = League::create($data);
+
+        // Auto-approve manager as a member
+        $league->members()->create([
+            'user_id' => Auth::id(),
+            'status'  => 'approved',
+        ]);
+
+        return redirect()->route('leagues.show', $league->id)
+            ->with('success', 'League created successfully!');
+    }
+
+    // ─── Show ─────────────────────────────────────────────────────────────────
+
+    public function show(int $id)
+    {
+        $userId = Auth::id();
+        $league = League::findOrFail($id);
+
+        $allMembers = $league->members()->with('user:id,username')->get();
+        $membership = $allMembers->firstWhere('user_id', $userId);
+
+        if (!$membership) {
+            return redirect()->route('leagues.index')
+                ->withErrors(['access' => 'You are not a member of this league.']);
+        }
+
+        $league->member_status = $membership->status;
+
+        $approvedMembers      = $allMembers->where('status', 'approved');
+        $league->member_count = $approvedMembers->count();
+
+        $standings = $membership->status === 'approved'
+            ? $this->computeStandings($league, $approvedMembers)
+            : [];
+
+        $isManager = $league->manager_id === $userId;
+
+        return view('leagues.show', compact('league', 'standings', 'isManager'));
+    }
+
+    // ─── Edit / Update ────────────────────────────────────────────────────────
+
+    public function edit(int $id)
+    {
+        $league = League::findOrFail($id);
+
+        if ($league->manager_id !== Auth::id()) {
+            return redirect()->route('leagues.show', $id);
+        }
+
+        return view('leagues.edit', compact('league'));
+    }
+
+    public function update(Request $request, int $id)
+    {
+        $league = League::findOrFail($id);
+
+        if ($league->manager_id !== Auth::id()) {
+            return redirect()->route('leagues.show', $id);
+        }
+
+        $data = $request->validate([
+            'name'                           => ['required', 'string', 'min:3', 'max:100', "unique:leagues,name,{$id}"],
+            'points_per_score'               => ['required', 'integer', 'min:0'],
+            'points_per_result'              => ['required', 'integer', 'min:0'],
+            'predictions_visible_before_game' => ['sometimes', 'boolean'],
+            'members_size_limit'             => ['nullable', 'integer', 'min:2'],
+            'grouped_deadline'               => ['sometimes', 'boolean'],
+            'deadline_days'                  => ['required', 'integer', 'min:0'],
+        ]);
+
+        $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
+        $data['grouped_deadline']                = $request->boolean('grouped_deadline');
+
+        $league->update($data);
+
+        return redirect()->route('leagues.show', $id)
+            ->with('success', 'League updated successfully!');
+    }
+
+    // ─── Destroy ──────────────────────────────────────────────────────────────
+
+    public function destroy(int $id)
+    {
+        $league = League::findOrFail($id);
+
+        if ($league->manager_id !== Auth::id()) {
+            return redirect()->route('leagues.index');
+        }
+
+        $league->delete();
+
+        return redirect()->route('leagues.index')
+            ->with('success', 'League deleted.');
+    }
+
+    // ─── Join ─────────────────────────────────────────────────────────────────
+
+    public function join()
+    {
+        return view('leagues.join');
+    }
+
+    public function processJoin(Request $request)
+    {
+        $request->validate([
+            'unique_code' => ['required', 'string', 'size:6', 'regex:/^[A-Z0-9]{6}$/'],
+        ]);
+
+        $code   = strtoupper($request->input('unique_code'));
+        $userId = Auth::id();
+        $league = League::where('unique_code', $code)->first();
+
+        if (!$league) {
+            return back()->withErrors(['unique_code' => 'No league found with that code.'])->withInput();
+        }
+
+        $existing = $league->members()->where('user_id', $userId)->first();
+
+        if ($existing) {
+            $msg = $existing->status === 'approved'
+                ? 'You are already a member of this league.'
+                : 'Your join request is already pending approval.';
+            return back()->withErrors(['unique_code' => $msg])->withInput();
+        }
+
+        if ($league->members_size_limit !== null) {
+            $count = $league->members()->where('status', 'approved')->count();
+            if ($count >= $league->members_size_limit) {
+                return back()->withErrors(['unique_code' => 'This league is full.'])->withInput();
+            }
+        }
+
+        $league->members()->create([
+            'user_id' => $userId,
+            'status'  => 'pending',
+        ]);
+
+        return redirect()->route('leagues.show', $league->id)
+            ->with('success', 'Join request sent. Waiting for manager approval.');
+    }
+
+    // ─── Members ──────────────────────────────────────────────────────────────
+
+    public function showMembers(int $id)
+    {
+        $league = League::findOrFail($id);
+
+        if ($league->manager_id !== Auth::id()) {
+            return redirect()->route('leagues.show', $id);
+        }
+
+        $members = $league->members()
+            ->with('user:id,username')
+            ->orderByRaw("FIELD(status,'pending','approved')")
+            ->orderBy('joined_at')
+            ->get()
+            ->map(function ($m) {
+                return [
+                    'id'        => $m->id,
+                    'user_id'   => $m->user_id,
+                    'username'  => $m->user->username,
+                    'status'    => $m->status,
+                    'joined_at' => $m->joined_at,
+                ];
+            });
+
+        $pending  = $members->filter(fn($m) => $m['status'] === 'pending')->values();
+        $approved = $members->filter(fn($m) => $m['status'] === 'approved')->values();
+
+        return view('leagues.members', compact('league', 'pending', 'approved'));
+    }
+
+    public function approveMember(Request $request, int $id, int $userId)
+    {
+        $league = League::findOrFail($id);
+
+        if ($league->manager_id !== Auth::id()) {
+            return redirect()->route('leagues.show', $id);
+        }
+
+        if ($league->members_size_limit !== null) {
+            $count = $league->members()->where('status', 'approved')->count();
+            if ($count >= $league->members_size_limit) {
+                return redirect()->route('leagues.members', $id)
+                    ->withErrors(['approve' => 'League is full, cannot approve more members.']);
+            }
+        }
+
+        $league->members()
+            ->where('user_id', $userId)
+            ->where('status', 'pending')
+            ->update(['status' => 'approved']);
+
+        return redirect()->route('leagues.members', $id);
+    }
+
+    public function removeMember(Request $request, int $id, int $userId)
+    {
+        $league = League::findOrFail($id);
+
+        if ($league->manager_id !== Auth::id()) {
+            return redirect()->route('leagues.show', $id);
+        }
+
+        if ($userId === Auth::id()) {
+            return redirect()->route('leagues.members', $id)
+                ->withErrors(['remove' => 'The manager cannot remove themselves from the league.']);
+        }
+
+        $league->members()
+            ->where('user_id', $userId)
+            ->delete();
+
+        return redirect()->route('leagues.members', $id);
+    }
+
+    // ─── Matches ──────────────────────────────────────────────────────────────
+
+    public function showMatches(Request $request, int $id)
+    {
+        $userId = Auth::id();
+        $league = League::findOrFail($id);
+
+        $allMembers = $league->members()->with('user:id,username')->get();
+        $membership = $allMembers->firstWhere('user_id', $userId);
+
+        if (!$membership || $membership->status !== 'approved') {
+            return redirect()->route('leagues.show', $id)
+                ->withErrors(['access' => 'You must be an approved member to view matches.']);
+        }
+
+        $currentUsername = Auth::user()->username;
+
+        // All stage keys in order (for the nav)
+        $allMatches       = WcMatches::all();
+        $allStages        = array_values(array_unique(array_column($allMatches, 'group')));
+        $groupStageKeys   = array_values(array_filter($allStages, fn($k) => str_starts_with($k, 'Group ')));
+        $knockoutKeys     = array_values(array_filter($allStages, fn($k) => !str_starts_with($k, 'Group ')));
+
+        // Determine active stage from query string, default to first
+        $activeStage = $request->query('stage', $allStages[0] ?? 'Group A');
+        if (!in_array($activeStage, $allStages)) {
+            $activeStage = $allStages[0];
+        }
+
+        $approvedUsernames = $allMembers->where('status', 'approved')
+            ->pluck('user.username')->filter()->values()->all();
+
+        // Only fetch predictions for the active stage matches, scoped to this league via FK
+        $stageMatchIds = array_column(
+            array_filter($allMatches, fn($m) => $m['group'] === $activeStage),
+            'id'
+        );
+
+        $allPredictions = MatchPrediction::where('league_id', $league->id)
+            ->whereIn('match_id', $stageMatchIds)
+            ->get();
+
+        // Build lookup: matchId → username → prediction
+        $predMap = [];
+        foreach ($allPredictions as $pred) {
+            $predMap[$pred->match_id][$pred->username] = $pred;
+        }
+
+        $now                      = now();
+        $predictionsVisibleBefore = $league->predictions_visible_before_game;
+        $groupedDeadline          = $league->grouped_deadline;
+        $deadlineDays             = $league->deadline_days;
+
+        // Precompute first kickoff per group for grouped_deadline mode
+        $groupFirstDate = [];
+        if ($groupedDeadline) {
+            foreach ($allMatches as $m) {
+                $d = strtotime($m['date']);
+                if (!isset($groupFirstDate[$m['group']]) || $d < $groupFirstDate[$m['group']]) {
+                    $groupFirstDate[$m['group']] = $d;
+                }
+            }
+        }
+
+        $matches = [];
+        foreach ($allMatches as $match) {
+            if ($match['group'] !== $activeStage) {
+                continue;
+            }
+
+            $kickoff      = strtotime($match['date']);
+            $matchStarted = $kickoff <= $now->timestamp;
+
+            $reference  = $groupedDeadline
+                ? ($groupFirstDate[$match['group']] ?? $kickoff)
+                : $kickoff;
+            $deadlineTs = $reference - ($deadlineDays * 86400);
+            $locked     = $now->timestamp >= $deadlineTs;
+
+            $matchPredMap = $predMap[$match['id']] ?? [];
+
+            $userPred = isset($matchPredMap[$currentUsername])
+                ? [
+                    'predicted_score_a' => $matchPredMap[$currentUsername]->predicted_score_a,
+                    'predicted_score_b' => $matchPredMap[$currentUsername]->predicted_score_b,
+                ]
+                : null;
+
+            $memberPredictions = [];
+            foreach ($matchPredMap as $uname => $pred) {
+                if (
+                    in_array($uname, $approvedUsernames) &&
+                    ($uname === $currentUsername || $matchStarted || $predictionsVisibleBefore)
+                ) {
+                    $memberPredictions[] = [
+                        'username'          => $uname,
+                        'predicted_score_a' => $pred->predicted_score_a,
+                        'predicted_score_b' => $pred->predicted_score_b,
+                    ];
+                }
+            }
+
+            $match['userPrediction']    = $userPred;
+            $match['memberPredictions'] = $memberPredictions;
+            $match['locked']            = $locked;
+            $match['deadline']          = date('c', $deadlineTs);
+
+            $matches[] = $match;
+        }
+
+        return view('leagues.matches', compact(
+            'league',
+            'matches',
+            'activeStage',
+            'groupStageKeys',
+            'knockoutKeys',
+            'currentUsername'
+        ));
+    }
+}
