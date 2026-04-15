@@ -52,12 +52,11 @@
                     <section class="match">
 
                         <header class="match__header">
-                            <span
-                                class="match__date">{{ \Carbon\Carbon::parse($match['date'])->format('D d M · H:i') }}</span>
+                            <time class="match__date" datetime="{{ $match['date'] }}"></time>
                             <span class="match__number">Match #{{ $match['matchNumber'] }}</span>
                             @if (!$locked)
                                 <span class="match__deadline-hint">Deadline:
-                                    {{ \Carbon\Carbon::parse($match['deadline'])->format('D d M · H:i') }}</span>
+                                    <time datetime="{{ $match['deadline'] }}"></time></span>
                             @else
                                 <span class="match__locked-badge">Locked</span>
                             @endif
@@ -138,74 +137,6 @@
     </main>
 
     @push('scripts')
-        <script>
-            (function() {
-                // ── Prediction inputs ───────────────────────────────────────
-                document.querySelectorAll('.prediction[data-match-id]').forEach(function(container) {
-                    var inputA = container.querySelector('.prediction__input--a');
-                    var inputB = container.querySelector('.prediction__input--b');
-                    if (!inputA || !inputB) return;
-
-                    var savedEl = container.querySelector('.prediction__saved');
-                    var errEl = container.querySelector('.prediction__error');
-
-                    function save() {
-                        var matchId = container.getAttribute('data-match-id');
-                        var leagueId = container.getAttribute('data-league-id');
-                        var valA = inputA.value.trim();
-                        var valB = inputB.value.trim();
-
-                        if (valA === '' || valB === '') return;
-
-                        var a = parseInt(valA, 10);
-                        var b = parseInt(valB, 10);
-
-                        if (isNaN(a) || isNaN(b) || a < 0 || b < 0 || a > 50 || b > 50) {
-                            if (errEl) errEl.textContent = 'Score must be 0–50';
-                            return;
-                        }
-
-                        if (errEl) errEl.textContent = '';
-
-                        fetch('/api/leagues/' + leagueId + '/matches/' + matchId + '/prediction', {
-                                method: 'PUT',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Accept': 'application/json',
-                                    'X-CSRF-TOKEN': window.csrfToken()
-                                },
-                                body: JSON.stringify({
-                                    predicted_score_a: a,
-                                    predicted_score_b: b
-                                })
-                            })
-                            .then(function(res) {
-                                if (!res.ok) return res.json().then(function(d) {
-                                    throw new Error(d.message || 'Error saving.');
-                                });
-                                return res.json();
-                            })
-                            .then(function() {
-                                if (savedEl) {
-                                    savedEl.style.display = 'inline-flex';
-                                    setTimeout(function() {
-                                        savedEl.style.display = 'none';
-                                    }, 2500);
-                                }
-                            })
-                            .catch(function(err) {
-                                if (errEl) errEl.textContent = err.message || 'Failed to save.';
-                            });
-                    }
-
-                    [inputA, inputB].forEach(function(input) {
-                        input.addEventListener('blur', save);
-                        input.addEventListener('keydown', function(e) {
-                            if (e.key === 'Enter') input.blur();
-                        });
-                    });
-                });
-            })();
-        </script>
+        @vite(['resources/js/matches.js'])
     @endpush
 </x-layout>

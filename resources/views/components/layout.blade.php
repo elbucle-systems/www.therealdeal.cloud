@@ -10,13 +10,11 @@
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
     <script>
-        (function() {
-            var theme = localStorage.getItem('vite-ui-theme') || 'system';
-            var resolved = theme === 'dark' ? 'dark' :
-                theme === 'light' ? 'light' :
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.classList.add(resolved);
-        })();
+        const theme = localStorage.getItem('vite-ui-theme') || 'system';
+        const resolved = theme === 'dark' ? 'dark' :
+            theme === 'light' ? 'light' :
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.classList.add(resolved);
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])

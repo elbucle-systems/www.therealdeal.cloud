@@ -9,9 +9,21 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-U3Ym1Yky.js",
+    "file": "assets/app-DfeCIPyr.js",
     "name": "app",
     "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/league-show.js": {
+    "file": "assets/league-show-B5NBs7wO.js",
+    "name": "league-show",
+    "src": "resources/js/league-show.js",
+    "isEntry": true
+  },
+  "resources/js/matches.js": {
+    "file": "assets/matches-Bg5y9OSb.js",
+    "name": "matches",
+    "src": "resources/js/matches.js",
     "isEntry": true
   }
 }
