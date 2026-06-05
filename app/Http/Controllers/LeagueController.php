@@ -6,6 +6,8 @@ use App\Data\WcMatches;
 use App\Models\League;
 use App\Models\MatchPrediction;
 use App\Models\User;
+use App\Notifications\LeagueRulesNotification;
+use App\Services\LeagueRulesSummary;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -219,7 +221,7 @@ class LeagueController extends Controller
         return view('leagues.edit', compact('league'));
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id, LeagueRulesSummary $rules)
     {
         $league = League::findOrFail($id);
 
@@ -240,7 +242,19 @@ class LeagueController extends Controller
         $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
         $data['grouped_deadline'] = $request->boolean('grouped_deadline');
 
+        $trackedOriginal = $league->only($rules->trackedFields());
+
         $league->update($data);
+        $league->refresh();
+
+        $changedFields = array_values(array_filter(
+            $rules->trackedFields(),
+            fn (string $field) => $trackedOriginal[$field] != $league->{$field}
+        ));
+
+        if ($changedFields !== []) {
+            $this->notifyMembersAboutRuleChange($league, $rules, $changedFields);
+        }
 
         return redirect()->route('leagues.show', $id)
             ->with('success', __('app.flash.league_updated'));
@@ -264,15 +278,35 @@ class LeagueController extends Controller
 
     // ─── Join ─────────────────────────────────────────────────────────────────
 
-    public function join()
+    public function join(Request $request, LeagueRulesSummary $rules)
     {
-        return view('leagues.join');
+        $previewLeague = null;
+
+        if ($request->filled('unique_code')) {
+            $request->validate([
+                'unique_code' => ['required', 'string', 'size:6', 'regex:/^[A-Z0-9]{6}$/'],
+            ]);
+
+            $previewLeague = League::where('unique_code', strtoupper($request->query('unique_code')))->first();
+
+            if (! $previewLeague) {
+                return redirect()->route('leagues.join')
+                    ->withErrors(['unique_code' => __('app.flash.league_not_found')])
+                    ->withInput();
+            }
+        }
+
+        return view('leagues.join', [
+            'previewLeague' => $previewLeague,
+            'previewRules' => $previewLeague ? $rules->forLeague($previewLeague) : null,
+        ]);
     }
 
-    public function processJoin(Request $request)
+    public function processJoin(Request $request, LeagueRulesSummary $rules)
     {
         $request->validate([
             'unique_code' => ['required', 'string', 'size:6', 'regex:/^[A-Z0-9]{6}$/'],
+            'rules_confirmed' => ['accepted'],
         ]);
 
         $code = strtoupper($request->input('unique_code'));
@@ -304,6 +338,11 @@ class LeagueController extends Controller
             'user_id' => $userId,
             'status' => 'pending',
         ]);
+
+        Auth::user()->notify(
+            (new LeagueRulesNotification($rules->forLeague($league), 'joined'))
+                ->locale(Auth::user()->locale ?? config('app.locale'))
+        );
 
         return redirect()->route('leagues.show', $league->id)
             ->with('success', __('app.flash.join_request_sent'));
@@ -361,7 +400,35 @@ class LeagueController extends Controller
             ->where('status', 'pending')
             ->update(['status' => 'approved']);
 
+        if ($user = User::find($userId)) {
+            $rules = app(LeagueRulesSummary::class);
+            $user->notify(
+                (new LeagueRulesNotification($rules->forLeague($league), 'approved'))
+                    ->locale($user->locale ?? config('app.locale'))
+            );
+        }
+
         return redirect()->route('leagues.members', $id);
+    }
+
+    /**
+     * @param  array<int, string>  $changedFields
+     */
+    private function notifyMembersAboutRuleChange(League $league, LeagueRulesSummary $rules, array $changedFields): void
+    {
+        $ruleSummary = $rules->forLeague($league);
+
+        $league->members()
+            ->whereIn('status', ['pending', 'approved'])
+            ->where('user_id', '!=', Auth::id())
+            ->with('user')
+            ->get()
+            ->each(function ($membership) use ($ruleSummary, $changedFields): void {
+                $membership->user->notify(
+                    (new LeagueRulesNotification($ruleSummary, 'updated', $changedFields))
+                        ->locale($membership->user->locale ?? config('app.locale'))
+                );
+            });
     }
 
     public function removeMember(Request $request, int $id, int $userId)

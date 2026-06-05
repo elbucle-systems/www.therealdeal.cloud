@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'accepted' => 'The :attribute field must be accepted.',
     'boolean' => 'The :attribute field must be true or false.',
     'confirmed' => 'The :attribute confirmation does not match.',
     'email' => 'The :attribute field must be a valid email address.',
@@ -31,6 +32,7 @@ return [
         'points_per_score' => 'points for exact score',
         'predicted_score_a' => 'home score',
         'predicted_score_b' => 'away score',
+        'rules_confirmed' => 'rules confirmation',
         'unique_code' => 'invite code',
         'username' => 'username',
     ],

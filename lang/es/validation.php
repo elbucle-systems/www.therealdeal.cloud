@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'accepted' => 'El campo :attribute debe ser aceptado.',
     'boolean' => 'El campo :attribute debe ser verdadero o falso.',
     'confirmed' => 'La confirmacion de :attribute no coincide.',
     'email' => 'El campo :attribute debe ser un correo valido.',
@@ -31,6 +32,7 @@ return [
         'points_per_score' => 'puntos por marcador exacto',
         'predicted_score_a' => 'marcador local',
         'predicted_score_b' => 'marcador visitante',
+        'rules_confirmed' => 'confirmacion de reglas',
         'unique_code' => 'codigo de invitacion',
         'username' => 'usuario',
     ],

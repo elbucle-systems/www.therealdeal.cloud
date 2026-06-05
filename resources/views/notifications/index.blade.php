@@ -55,6 +55,13 @@
                                     <time datetime="{{ $notification->data['deadline'] }}"></time>
                                 </p>
                             @endif
+                            @if (!empty($notification->data['rules']['lines']))
+                                <ul class="rules-list notification-card__rules">
+                                    @foreach ($notification->data['rules']['lines'] as $line)
+                                        <li>{{ $line }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
 
                         @if (!$notification->read_at)
