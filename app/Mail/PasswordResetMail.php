@@ -17,7 +17,7 @@ class PasswordResetMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reset Your Password – The Real Deal',
+            subject: __('app.mail.password_subject'),
         );
     }
 

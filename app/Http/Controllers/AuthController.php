@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
-    // ─── Register: Step 1 ────────────────────────────────────────────────────
-
     public function showRegisterEmail()
     {
         return view('auth.register-email');
@@ -29,7 +27,7 @@ class AuthController extends Controller
         $email = $request->input('email');
 
         if (User::where('email', $email)->exists()) {
-            return back()->withErrors(['email' => 'Email is already registered.'])->withInput();
+            return back()->withErrors(['email' => __('app.flash.email_registered')])->withInput();
         }
 
         $verificationUrl = URL::temporarySignedRoute(
@@ -40,16 +38,14 @@ class AuthController extends Controller
 
         Mail::to($email)->send(new RegistrationMail($verificationUrl));
 
-        return back()->with('success', 'Verification email sent. Check your inbox — the link is valid for 24 hours.');
+        return back()->with('success', __('app.flash.verification_sent'));
     }
-
-    // ─── Register: Step 2 ────────────────────────────────────────────────────
 
     public function showFinalRegistration(Request $request)
     {
         if (! $request->hasValidSignature()) {
             return redirect()->route('register')
-                ->withErrors(['email' => 'Invalid or expired registration link. Please register again.']);
+                ->withErrors(['email' => __('app.flash.invalid_registration_link')]);
         }
 
         return view('auth.final-registration', ['email' => $request->query('email')]);
@@ -59,7 +55,7 @@ class AuthController extends Controller
     {
         if (! $request->hasValidSignature()) {
             return redirect()->route('register')
-                ->withErrors(['email' => 'Invalid or expired registration link. Please register again.']);
+                ->withErrors(['email' => __('app.flash.invalid_registration_link')]);
         }
 
         $request->validate([
@@ -71,13 +67,13 @@ class AuthController extends Controller
 
         if (User::where('email', $email)->exists()) {
             return redirect()->route('register')
-                ->withErrors(['email' => 'This email has already been registered.']);
+                ->withErrors(['email' => __('app.flash.registered_already')]);
         }
 
         $user = User::create([
-            'username'         => $request->input('username'),
-            'email'            => $email,
-            'password'         => $request->input('password'),
+            'username' => $request->input('username'),
+            'email' => $email,
+            'password' => $request->input('password'),
             'email_verified_at' => now(),
         ]);
 
@@ -85,8 +81,6 @@ class AuthController extends Controller
 
         return redirect('/');
     }
-
-    // ─── Login / Logout ───────────────────────────────────────────────────────
 
     public function showLogin()
     {
@@ -96,7 +90,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+            'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
 
@@ -106,20 +100,24 @@ class AuthController extends Controller
             return redirect()->intended('/');
         }
 
-        return back()->withErrors(['email' => 'Invalid email or password.'])->withInput();
+        return back()->withErrors(['email' => __('app.flash.invalid_credentials')])->withInput();
     }
 
     public function logout(Request $request)
     {
+        $locale = $request->session()->get('locale');
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        if ($locale) {
+            $request->session()->put('locale', $locale);
+        }
+
         return redirect()->route('login');
     }
-
-    // ─── Forgot Password ─────────────────────────────────────────────────────
 
     public function showForgotPassword()
     {
@@ -134,7 +132,7 @@ class AuthController extends Controller
 
         $email = $request->input('email');
 
-        // Always respond the same way to avoid user enumeration
+        // Always respond the same way to avoid user enumeration.
         if (User::where('email', $email)->exists()) {
             $resetUrl = URL::temporarySignedRoute(
                 'password.set',
@@ -145,16 +143,14 @@ class AuthController extends Controller
             Mail::to($email)->send(new PasswordResetMail($resetUrl));
         }
 
-        return back()->with('success', 'If that email exists, a reset link has been sent. The link is valid for 1 hour.');
+        return back()->with('success', __('app.flash.password_reset_sent'));
     }
-
-    // ─── Reset Password ───────────────────────────────────────────────────────
 
     public function showSetPassword(Request $request)
     {
         if (! $request->hasValidSignature()) {
             return redirect()->route('password.request')
-                ->withErrors(['email' => 'Invalid or expired reset link. Please request a new one.']);
+                ->withErrors(['email' => __('app.flash.invalid_reset_link')]);
         }
 
         return view('auth.set-password', ['email' => $request->query('email')]);
@@ -164,7 +160,7 @@ class AuthController extends Controller
     {
         if (! $request->hasValidSignature()) {
             return redirect()->route('password.request')
-                ->withErrors(['email' => 'Invalid or expired reset link. Please request a new one.']);
+                ->withErrors(['email' => __('app.flash.invalid_reset_link')]);
         }
 
         $request->validate([
@@ -177,6 +173,6 @@ class AuthController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
-        return redirect()->route('login')->with('success', 'Password reset successfully. You can now log in.');
+        return redirect()->route('login')->with('success', __('app.flash.password_reset'));
     }
 }

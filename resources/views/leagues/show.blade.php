@@ -3,7 +3,7 @@
 
         <a class="back-link" href="{{ route('leagues.index') }}">
             <x-lucide-chevron-left width="16" height="16" />
-            Back to Leagues
+            {{ __('app.actions.back_to_leagues') }}
         </a>
 
         @if (session('success'))
@@ -19,16 +19,16 @@
             <div class="league-detail__title-group">
                 <h1 class="league-detail__title">{{ $league->name }}</h1>
                 <div class="league-detail__code-row">
-                    <span class="league-detail__code-label">Invite code:</span>
+                    <span class="league-detail__code-label">{{ __('app.league.invite_code') }}</span>
                     <button class="league-detail__code" id="copy-code" data-code="{{ $league->unique_code }}"
-                        title="Click to copy">
+                        title="{{ __('app.league.copy_title') }}">
                         {{ $league->unique_code }}
                         <span id="copy-icon">
                             <x-lucide-clipboard-copy width="14" height="14"
                                 style="margin-left:6px;vertical-align:middle" />
                         </span>
                     </button>
-                    <span class="league-detail__code-hint">click to copy</span>
+                    <span class="league-detail__code-hint">{{ __('app.league.click_to_copy') }}</span>
                 </div>
             </div>
 
@@ -36,17 +36,17 @@
                 @if ($isManager)
                     <a class="btn btn--ghost" href="{{ route('leagues.members', $league->id) }}">
                         <x-lucide-users width="15" height="15" />
-                        Members
+                        {{ __('app.actions.members') }}
                     </a>
                     <a class="btn btn--secondary" href="{{ route('leagues.edit', $league->id) }}">
                         <x-lucide-pencil width="15" height="15" />
-                        Edit
+                        {{ __('app.actions.edit') }}
                     </a>
                 @endif
                 @if ($league->member_status === 'approved')
                     <a class="btn btn--primary" href="{{ route('leagues.matches', $league->id) }}">
                         <x-lucide-calendar width="15" height="15" />
-                        Matches
+                        {{ __('app.actions.matches') }}
                     </a>
                 @endif
             </div>
@@ -54,38 +54,39 @@
 
         @if ($league->member_status === 'pending')
             <div class="league-detail__pending-notice">
-                Your membership is pending approval from the league manager. You'll be able to view standings once
-                approved.
+                {{ __('app.league.pending_notice') }}
             </div>
         @endif
 
         {{-- Settings summary --}}
         <div class="league-settings">
             <div class="league-settings__item">
-                <span class="league-settings__label">Points — Exact Score</span>
+                <span class="league-settings__label">{{ __('app.league.points_exact') }}</span>
                 <span class="league-settings__value">{{ $league->points_per_score }}</span>
             </div>
             <div class="league-settings__item">
-                <span class="league-settings__label">Points — Correct Result</span>
+                <span class="league-settings__label">{{ __('app.league.points_result') }}</span>
                 <span class="league-settings__value">{{ $league->points_per_result }}</span>
             </div>
             <div class="league-settings__item">
-                <span class="league-settings__label">Deadline</span>
+                <span class="league-settings__label">{{ __('app.league.deadline') }}</span>
                 <span class="league-settings__value">
-                    {{ $league->deadline_days }} day{{ $league->deadline_days !== 1 ? 's' : '' }} before
-                    {{ $league->grouped_deadline ? '(grouped)' : '(per match)' }}
+                    {{ trans_choice('app.league.deadline_summary', $league->deadline_days, [
+                        'count' => $league->deadline_days,
+                        'mode' => $league->grouped_deadline ? __('app.league.grouped') : __('app.league.per_match'),
+                    ]) }}
                 </span>
             </div>
             <div class="league-settings__item">
-                <span class="league-settings__label">Show Predictions Early</span>
+                <span class="league-settings__label">{{ __('app.league.show_predictions_early') }}</span>
                 <span class="league-settings__value">
-                    {{ $league->predictions_visible_before_game ? 'Yes — visible before kickoff' : 'No — hidden until kickoff' }}
+                    {{ $league->predictions_visible_before_game ? __('app.league.visible_before_kickoff') : __('app.league.hidden_until_kickoff') }}
                 </span>
             </div>
             <div class="league-settings__item">
-                <span class="league-settings__label">Max Members</span>
+                <span class="league-settings__label">{{ __('app.league.max_members') }}</span>
                 <span class="league-settings__value">
-                    {{ $league->members_size_limit ?? 'Unlimited' }}
+                    {{ $league->members_size_limit ?? __('app.league.unlimited') }}
                 </span>
             </div>
         </div>
@@ -93,14 +94,14 @@
         {{-- Standings --}}
         @if ($league->member_status === 'approved')
             <div>
-                <h2 class="standings__section-title">STANDINGS</h2>
+                <h2 class="standings__section-title">{{ __('app.league.standings') }}</h2>
                 <div class="standings">
                     <div class="standings__header">
                         <span>#</span>
-                        <span>Player</span>
-                        <span style="text-align:center">Points</span>
-                        <span style="text-align:center">Exact</span>
-                        <span style="text-align:center">Result</span>
+                        <span>{{ __('app.league.player') }}</span>
+                        <span style="text-align:center">{{ __('app.league.points') }}</span>
+                        <span style="text-align:center">{{ __('app.league.exact') }}</span>
+                        <span style="text-align:center">{{ __('app.league.result') }}</span>
                     </div>
 
                     @forelse ($standings as $i => $entry)
@@ -112,7 +113,7 @@
                             <span class="standings__stat">{{ $entry['correct_result_count'] }}</span>
                         </div>
                     @empty
-                        <div class="standings__empty">No predictions yet, or no matches have been played.</div>
+                        <div class="standings__empty">{{ __('app.league.no_standings') }}</div>
                     @endforelse
                 </div>
             </div>

@@ -6,6 +6,8 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
     minute: "2-digit",
 });
 
+const messages = window.matchMessages || {};
+
 document.querySelectorAll("time[datetime]").forEach(function (el) {
     el.textContent = dateFormatter.format(
         new Date(el.getAttribute("datetime")),
@@ -29,7 +31,7 @@ function savePrediction(container) {
     const b = parseInt(valB, 10);
 
     if (isNaN(a) || isNaN(b) || a < 0 || b < 0 || a > 50 || b > 50) {
-        if (errEl) errEl.textContent = "Score must be 0–50";
+        if (errEl) errEl.textContent = messages.scoreRange || "Score must be 0-50";
         return;
     }
 
@@ -47,7 +49,7 @@ function savePrediction(container) {
         .then(function (res) {
             if (!res.ok)
                 return res.json().then(function (d) {
-                    throw new Error(d.message || "Error saving.");
+                    throw new Error(d.error || d.message || messages.saveError || "Error saving.");
                 });
             return res.json();
         })
@@ -60,7 +62,7 @@ function savePrediction(container) {
             }
         })
         .catch(function (err) {
-            if (errEl) errEl.textContent = err.message || "Failed to save.";
+            if (errEl) errEl.textContent = err.message || messages.saveFailed || "Failed to save.";
         });
 }
 

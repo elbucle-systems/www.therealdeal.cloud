@@ -3,15 +3,15 @@
 
         <a class="back-link" href="{{ route('leagues.show', $league->id) }}">
             <x-lucide-chevron-left width="16" height="16" />
-            Back to {{ $league->name }}
+            {{ __('app.league.back_to_league', ['league' => $league->name]) }}
         </a>
 
-        <h1 class="matches-page__title">Matches</h1>
+        <h1 class="matches-page__title">{{ __('app.actions.matches') }}</h1>
 
         <nav class="match-tabs">
             @if (!empty($groupStageKeys))
                 <div class="match-tabs__row">
-                    <span class="match-tabs__label">Groups</span>
+                    <span class="match-tabs__label">{{ __('app.league.groups') }}</span>
                     @foreach ($groupStageKeys as $gName)
                         <a class="match-tab {{ $gName === $activeStage ? 'match-tab--active' : '' }}"
                             href="{{ route('leagues.matches', [$league->id, 'stage' => $gName]) }}"
@@ -23,7 +23,7 @@
             @endif
             @if (!empty($knockoutKeys))
                 <div class="match-tabs__row">
-                    <span class="match-tabs__label">Knockout</span>
+                    <span class="match-tabs__label">{{ __('app.league.knockout') }}</span>
                     @foreach ($knockoutKeys as $gName)
                         <a class="match-tab {{ $gName === $activeStage ? 'match-tab--active' : '' }}"
                             href="{{ route('leagues.matches', [$league->id, 'stage' => $gName]) }}"
@@ -53,12 +53,12 @@
 
                         <header class="match__header">
                             <time class="match__date" datetime="{{ $match['date'] }}"></time>
-                            <span class="match__number">Match #{{ $match['matchNumber'] }}</span>
+                            <span class="match__number">{{ __('app.league.match_number', ['number' => $match['matchNumber']]) }}</span>
                             @if (!$locked)
-                                <span class="match__deadline-hint">Deadline:
+                                <span class="match__deadline-hint">{{ __('app.league.deadline') }}:
                                     <time datetime="{{ $match['deadline'] }}"></time></span>
                             @else
-                                <span class="match__locked-badge">Locked</span>
+                                <span class="match__locked-badge">{{ __('app.league.locked') }}</span>
                             @endif
                         </header>
 
@@ -75,7 +75,7 @@
                         </main>
 
                         <footer class="match__footer">
-                            <h4 class="predictions__title">Predictions</h4>
+                            <h4 class="predictions__title">{{ __('app.league.predictions') }}</h4>
                             <div class="predictions">
 
                                 {{-- Own editable prediction --}}
@@ -89,13 +89,13 @@
                                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                                 <polyline points="20 6 9 17 4 12" />
                                             </svg>
-                                            saved
+                                            {{ __('app.league.saved') }}
                                         </span>
                                     </span>
                                     <span class="prediction__result">
                                         <span class="prediction__field">
                                             <input class="prediction__input prediction__input--a" type="number"
-                                                min="0" max="50" placeholder="–"
+                                                min="0" max="50" placeholder="-"
                                                 value="{{ $predA ?? '' }}"
                                                 {{ $locked ? 'readonly disabled' : '' }} />
                                             <span class="prediction__error"></span>
@@ -103,7 +103,7 @@
                                         <span class="prediction__separator">-</span>
                                         <span class="prediction__field">
                                             <input class="prediction__input prediction__input--b" type="number"
-                                                min="0" max="50" placeholder="–"
+                                                min="0" max="50" placeholder="-"
                                                 value="{{ $predB ?? '' }}"
                                                 {{ $locked ? 'readonly disabled' : '' }} />
                                         </span>
@@ -137,6 +137,13 @@
     </main>
 
     @push('scripts')
+        <script>
+            window.matchMessages = {
+                scoreRange: @js(__('app.api.score_range')),
+                saveError: @js(__('app.api.save_error')),
+                saveFailed: @js(__('app.api.save_failed')),
+            };
+        </script>
         @vite(['resources/js/matches.js'])
     @endpush
 </x-layout>

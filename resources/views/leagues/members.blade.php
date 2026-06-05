@@ -2,10 +2,10 @@
     <main class="members-page">
         <a class="back-link" href="{{ route('leagues.show', $league->id) }}">
             <x-lucide-chevron-left width="16" height="16" />
-            Back to {{ $league->name }}
+            {{ __('app.league.back_to_league', ['league' => $league->name]) }}
         </a>
 
-        <h1 class="members-page__title">Members</h1>
+        <h1 class="members-page__title">{{ __('app.actions.members') }}</h1>
 
         @if (session('success'))
             <p style="color:var(--primary-green);font-family:'Montserrat',sans-serif;font-size:14px;margin-bottom:16px">
@@ -23,14 +23,13 @@
 
         {{-- Pending requests --}}
         @if ($pending->isNotEmpty())
-            <h2 class="members__section-title">Pending Requests</h2>
+            <h2 class="members__section-title">{{ __('app.league.pending_requests') }}</h2>
             <div class="members__list">
                 @foreach ($pending as $member)
                     <div class="members__row">
                         <div class="members__info">
                             <span class="members__username">{{ $member['username'] }}</span>
-                            <span class="members__joined">Requested
-                                {{ \Carbon\Carbon::parse($member['joined_at'])->diffForHumans() }}</span>
+                            <span class="members__joined">{{ __('app.league.requested_at', ['time' => \Carbon\Carbon::parse($member['joined_at'])->diffForHumans()]) }}</span>
                         </div>
                         <div class="members__actions">
                             <form method="POST"
@@ -38,16 +37,16 @@
                                 @csrf
                                 <button class="btn btn--primary btn--sm" type="submit">
                                     <x-lucide-check width="14" height="14" />
-                                    Approve
+                                    {{ __('app.actions.approve') }}
                                 </button>
                             </form>
                             <form method="POST"
                                 action="{{ route('leagues.members.remove', [$league->id, $member['user_id']]) }}"
-                                onsubmit="return confirm('Remove {{ addslashes($member['username']) }}?')">
+                                onsubmit="return confirm(@js(__('app.league.remove_confirm', ['username' => $member['username']])))">
                                 @csrf
                                 <button class="btn btn--ghost btn--sm" type="submit">
                                     <x-lucide-x width="14" height="14" />
-                                    Decline
+                                    {{ __('app.actions.decline') }}
                                 </button>
                             </form>
                         </div>
@@ -57,29 +56,27 @@
         @endif
 
         {{-- Approved members --}}
-        <h2 class="members__section-title">Approved Members</h2>
+        <h2 class="members__section-title">{{ __('app.league.approved_members') }}</h2>
 
         @if ($approved->isEmpty())
-            <p style="font-family:'Montserrat',sans-serif;font-size:14px;color:var(--subtext-color)">No approved members
-                yet.</p>
+            <p style="font-family:'Montserrat',sans-serif;font-size:14px;color:var(--subtext-color)">{{ __('app.league.no_approved_members') }}</p>
         @else
             <div class="members__list">
                 @foreach ($approved as $member)
                     <div class="members__row">
                         <div class="members__info">
                             <span class="members__username">{{ $member['username'] }}</span>
-                            <span class="members__joined">Joined
-                                {{ \Carbon\Carbon::parse($member['joined_at'])->diffForHumans() }}</span>
+                            <span class="members__joined">{{ __('app.league.joined_at', ['time' => \Carbon\Carbon::parse($member['joined_at'])->diffForHumans()]) }}</span>
                         </div>
                         @if ($member['user_id'] !== auth()->id())
                             <div class="members__actions">
                                 <form method="POST"
                                     action="{{ route('leagues.members.remove', [$league->id, $member['user_id']]) }}"
-                                    onsubmit="return confirm('Remove {{ addslashes($member['username']) }} from the league?')">
+                                    onsubmit="return confirm(@js(__('app.league.remove_from_league_confirm', ['username' => $member['username']])))">
                                     @csrf
                                     <button class="btn btn--ghost btn--sm" type="submit">
                                         <x-lucide-x width="14" height="14" />
-                                        Remove
+                                        {{ __('app.actions.remove') }}
                                     </button>
                                 </form>
                             </div>

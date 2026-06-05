@@ -17,7 +17,7 @@ class RegistrationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Complete Your Registration – The Real Deal',
+            subject: __('app.mail.registration_subject'),
         );
     }
 

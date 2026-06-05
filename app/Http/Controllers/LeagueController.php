@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Data\WcMatches;
 use App\Models\League;
 use App\Models\MatchPrediction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class LeagueController extends Controller
 {
@@ -21,7 +21,7 @@ class LeagueController extends Controller
             for ($i = 0; $i < 6; $i++) {
                 $code .= $chars[random_int(0, strlen($chars) - 1)];
             }
-            if (!League::where('unique_code', $code)->exists()) {
+            if (! League::where('unique_code', $code)->exists()) {
                 return $code;
             }
         }
@@ -30,8 +30,13 @@ class LeagueController extends Controller
 
     private function outcomeSign(int $a, int $b): int
     {
-        if ($a > $b) return 1;
-        if ($a < $b) return -1;
+        if ($a > $b) {
+            return 1;
+        }
+        if ($a < $b) {
+            return -1;
+        }
+
         return 0;
     }
 
@@ -59,26 +64,28 @@ class LeagueController extends Controller
             $predMap[$pred->username][$pred->match_id] = $pred;
         }
 
-        $pointsPerScore  = $league->points_per_score;
+        $pointsPerScore = $league->points_per_score;
         $pointsPerResult = $league->points_per_result;
 
         $playedMatches = array_filter(
             WcMatches::all(),
-            fn($m) => strtotime($m['date']) < $now->timestamp
+            fn ($m) => strtotime($m['date']) < $now->timestamp
                 && $m['teamAGoals'] !== null
                 && $m['teamBGoals'] !== null
         );
 
         $standings = [];
         foreach ($approvedMembers as $member) {
-            $username         = $member->user->username;
-            $totalPoints      = 0;
-            $exactScoreCount  = 0;
+            $username = $member->user->username;
+            $totalPoints = 0;
+            $exactScoreCount = 0;
             $correctResultCount = 0;
 
             foreach ($playedMatches as $match) {
                 $pred = $predMap[$username][$match['id']] ?? null;
-                if (!$pred) continue;
+                if (! $pred) {
+                    continue;
+                }
 
                 $exactScore = $pred->predicted_score_a === $match['teamAGoals']
                     && $pred->predicted_score_b === $match['teamBGoals'];
@@ -96,15 +103,15 @@ class LeagueController extends Controller
             }
 
             $standings[] = [
-                'user_id'             => $member->user_id,
-                'username'            => $username,
-                'total_points'        => $totalPoints,
-                'exact_score_count'   => $exactScoreCount,
+                'user_id' => $member->user_id,
+                'username' => $username,
+                'total_points' => $totalPoints,
+                'exact_score_count' => $exactScoreCount,
                 'correct_result_count' => $correctResultCount,
             ];
         }
 
-        usort($standings, fn($a, $b) => $b['total_points'] <=> $a['total_points']);
+        usort($standings, fn ($a, $b) => $b['total_points'] <=> $a['total_points']);
 
         return $standings;
     }
@@ -115,20 +122,21 @@ class LeagueController extends Controller
     {
         $userId = Auth::id();
 
-        /** @var \App\Models\User $authUser */
-        $authUser    = Auth::user();
+        /** @var User $authUser */
+        $authUser = Auth::user();
         $memberships = $authUser->leagueMembers()
-            ->with(['league' => fn($q) => $q->withCount(['members as member_count' => fn($q) => $q->where('status', 'approved')])])
+            ->with(['league' => fn ($q) => $q->withCount(['members as member_count' => fn ($q) => $q->where('status', 'approved')])])
             ->get();
 
-        $leagues = $memberships->map(function ($m) use ($userId) {
+        $leagues = $memberships->map(function ($m) {
             $league = $m->league;
             $league->member_status = $m->status;
+
             return $league;
         });
 
-        $managing = $leagues->filter(fn($l) => $l->manager_id === $userId)->values();
-        $memberOf = $leagues->filter(fn($l) => $l->manager_id !== $userId)->values();
+        $managing = $leagues->filter(fn ($l) => $l->manager_id === $userId)->values();
+        $memberOf = $leagues->filter(fn ($l) => $l->manager_id !== $userId)->values();
 
         return view('leagues.index', compact('managing', 'memberOf'));
     }
@@ -143,30 +151,30 @@ class LeagueController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'                           => ['required', 'string', 'min:3', 'max:100', 'unique:leagues,name'],
-            'points_per_score'               => ['required', 'integer', 'min:0'],
-            'points_per_result'              => ['required', 'integer', 'min:0'],
+            'name' => ['required', 'string', 'min:3', 'max:100', 'unique:leagues,name'],
+            'points_per_score' => ['required', 'integer', 'min:0'],
+            'points_per_result' => ['required', 'integer', 'min:0'],
             'predictions_visible_before_game' => ['sometimes', 'boolean'],
-            'members_size_limit'             => ['nullable', 'integer', 'min:2'],
-            'grouped_deadline'               => ['sometimes', 'boolean'],
-            'deadline_days'                  => ['required', 'integer', 'min:0'],
+            'members_size_limit' => ['nullable', 'integer', 'min:2'],
+            'grouped_deadline' => ['sometimes', 'boolean'],
+            'deadline_days' => ['required', 'integer', 'min:0'],
         ]);
 
         $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
-        $data['grouped_deadline']                = $request->boolean('grouped_deadline');
-        $data['manager_id']                      = Auth::id();
-        $data['unique_code']                     = $this->generateUniqueCode();
+        $data['grouped_deadline'] = $request->boolean('grouped_deadline');
+        $data['manager_id'] = Auth::id();
+        $data['unique_code'] = $this->generateUniqueCode();
 
         $league = League::create($data);
 
         // Auto-approve manager as a member
         $league->members()->create([
             'user_id' => Auth::id(),
-            'status'  => 'approved',
+            'status' => 'approved',
         ]);
 
         return redirect()->route('leagues.show', $league->id)
-            ->with('success', 'League created successfully!');
+            ->with('success', __('app.flash.league_created'));
     }
 
     // ─── Show ─────────────────────────────────────────────────────────────────
@@ -179,14 +187,14 @@ class LeagueController extends Controller
         $allMembers = $league->members()->with('user:id,username')->get();
         $membership = $allMembers->firstWhere('user_id', $userId);
 
-        if (!$membership) {
+        if (! $membership) {
             return redirect()->route('leagues.index')
-                ->withErrors(['access' => 'You are not a member of this league.']);
+                ->withErrors(['access' => __('app.flash.member_only')]);
         }
 
         $league->member_status = $membership->status;
 
-        $approvedMembers      = $allMembers->where('status', 'approved');
+        $approvedMembers = $allMembers->where('status', 'approved');
         $league->member_count = $approvedMembers->count();
 
         $standings = $membership->status === 'approved'
@@ -220,22 +228,22 @@ class LeagueController extends Controller
         }
 
         $data = $request->validate([
-            'name'                           => ['required', 'string', 'min:3', 'max:100', "unique:leagues,name,{$id}"],
-            'points_per_score'               => ['required', 'integer', 'min:0'],
-            'points_per_result'              => ['required', 'integer', 'min:0'],
+            'name' => ['required', 'string', 'min:3', 'max:100', "unique:leagues,name,{$id}"],
+            'points_per_score' => ['required', 'integer', 'min:0'],
+            'points_per_result' => ['required', 'integer', 'min:0'],
             'predictions_visible_before_game' => ['sometimes', 'boolean'],
-            'members_size_limit'             => ['nullable', 'integer', 'min:2'],
-            'grouped_deadline'               => ['sometimes', 'boolean'],
-            'deadline_days'                  => ['required', 'integer', 'min:0'],
+            'members_size_limit' => ['nullable', 'integer', 'min:2'],
+            'grouped_deadline' => ['sometimes', 'boolean'],
+            'deadline_days' => ['required', 'integer', 'min:0'],
         ]);
 
         $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
-        $data['grouped_deadline']                = $request->boolean('grouped_deadline');
+        $data['grouped_deadline'] = $request->boolean('grouped_deadline');
 
         $league->update($data);
 
         return redirect()->route('leagues.show', $id)
-            ->with('success', 'League updated successfully!');
+            ->with('success', __('app.flash.league_updated'));
     }
 
     // ─── Destroy ──────────────────────────────────────────────────────────────
@@ -251,7 +259,7 @@ class LeagueController extends Controller
         $league->delete();
 
         return redirect()->route('leagues.index')
-            ->with('success', 'League deleted.');
+            ->with('success', __('app.flash.league_deleted'));
     }
 
     // ─── Join ─────────────────────────────────────────────────────────────────
@@ -267,37 +275,38 @@ class LeagueController extends Controller
             'unique_code' => ['required', 'string', 'size:6', 'regex:/^[A-Z0-9]{6}$/'],
         ]);
 
-        $code   = strtoupper($request->input('unique_code'));
+        $code = strtoupper($request->input('unique_code'));
         $userId = Auth::id();
         $league = League::where('unique_code', $code)->first();
 
-        if (!$league) {
-            return back()->withErrors(['unique_code' => 'No league found with that code.'])->withInput();
+        if (! $league) {
+            return back()->withErrors(['unique_code' => __('app.flash.league_not_found')])->withInput();
         }
 
         $existing = $league->members()->where('user_id', $userId)->first();
 
         if ($existing) {
             $msg = $existing->status === 'approved'
-                ? 'You are already a member of this league.'
-                : 'Your join request is already pending approval.';
+                ? __('app.flash.you_are_member')
+                : __('app.flash.join_request_pending');
+
             return back()->withErrors(['unique_code' => $msg])->withInput();
         }
 
         if ($league->members_size_limit !== null) {
             $count = $league->members()->where('status', 'approved')->count();
             if ($count >= $league->members_size_limit) {
-                return back()->withErrors(['unique_code' => 'This league is full.'])->withInput();
+                return back()->withErrors(['unique_code' => __('app.flash.league_full')])->withInput();
             }
         }
 
         $league->members()->create([
             'user_id' => $userId,
-            'status'  => 'pending',
+            'status' => 'pending',
         ]);
 
         return redirect()->route('leagues.show', $league->id)
-            ->with('success', 'Join request sent. Waiting for manager approval.');
+            ->with('success', __('app.flash.join_request_sent'));
     }
 
     // ─── Members ──────────────────────────────────────────────────────────────
@@ -317,16 +326,16 @@ class LeagueController extends Controller
             ->get()
             ->map(function ($m) {
                 return [
-                    'id'        => $m->id,
-                    'user_id'   => $m->user_id,
-                    'username'  => $m->user->username,
-                    'status'    => $m->status,
+                    'id' => $m->id,
+                    'user_id' => $m->user_id,
+                    'username' => $m->user->username,
+                    'status' => $m->status,
                     'joined_at' => $m->joined_at,
                 ];
             });
 
-        $pending  = $members->filter(fn($m) => $m['status'] === 'pending')->values();
-        $approved = $members->filter(fn($m) => $m['status'] === 'approved')->values();
+        $pending = $members->filter(fn ($m) => $m['status'] === 'pending')->values();
+        $approved = $members->filter(fn ($m) => $m['status'] === 'approved')->values();
 
         return view('leagues.members', compact('league', 'pending', 'approved'));
     }
@@ -343,7 +352,7 @@ class LeagueController extends Controller
             $count = $league->members()->where('status', 'approved')->count();
             if ($count >= $league->members_size_limit) {
                 return redirect()->route('leagues.members', $id)
-                    ->withErrors(['approve' => 'League is full, cannot approve more members.']);
+                    ->withErrors(['approve' => __('app.flash.league_full_approve')]);
             }
         }
 
@@ -365,7 +374,7 @@ class LeagueController extends Controller
 
         if ($userId === Auth::id()) {
             return redirect()->route('leagues.members', $id)
-                ->withErrors(['remove' => 'The manager cannot remove themselves from the league.']);
+                ->withErrors(['remove' => __('app.flash.manager_cannot_remove_self')]);
         }
 
         $league->members()
@@ -385,22 +394,22 @@ class LeagueController extends Controller
         $allMembers = $league->members()->with('user:id,username')->get();
         $membership = $allMembers->firstWhere('user_id', $userId);
 
-        if (!$membership || $membership->status !== 'approved') {
+        if (! $membership || $membership->status !== 'approved') {
             return redirect()->route('leagues.show', $id)
-                ->withErrors(['access' => 'You must be an approved member to view matches.']);
+                ->withErrors(['access' => __('app.flash.must_be_approved')]);
         }
 
         $currentUsername = Auth::user()->username;
 
         // All stage keys in order (for the nav)
-        $allMatches       = WcMatches::all();
-        $allStages        = array_values(array_unique(array_column($allMatches, 'group')));
-        $groupStageKeys   = array_values(array_filter($allStages, fn($k) => str_starts_with($k, 'Group ')));
-        $knockoutKeys     = array_values(array_filter($allStages, fn($k) => !str_starts_with($k, 'Group ')));
+        $allMatches = WcMatches::all();
+        $allStages = array_values(array_unique(array_column($allMatches, 'group')));
+        $groupStageKeys = array_values(array_filter($allStages, fn ($k) => str_starts_with($k, 'Group ')));
+        $knockoutKeys = array_values(array_filter($allStages, fn ($k) => ! str_starts_with($k, 'Group ')));
 
         // Determine active stage from query string, default to first
         $activeStage = $request->query('stage', $allStages[0] ?? 'Group A');
-        if (!in_array($activeStage, $allStages)) {
+        if (! in_array($activeStage, $allStages)) {
             $activeStage = $allStages[0];
         }
 
@@ -409,7 +418,7 @@ class LeagueController extends Controller
 
         // Only fetch predictions for the active stage matches, scoped to this league via FK
         $stageMatchIds = array_column(
-            array_filter($allMatches, fn($m) => $m['group'] === $activeStage),
+            array_filter($allMatches, fn ($m) => $m['group'] === $activeStage),
             'id'
         );
 
@@ -423,17 +432,17 @@ class LeagueController extends Controller
             $predMap[$pred->match_id][$pred->username] = $pred;
         }
 
-        $now                      = now();
+        $now = now();
         $predictionsVisibleBefore = $league->predictions_visible_before_game;
-        $groupedDeadline          = $league->grouped_deadline;
-        $deadlineDays             = $league->deadline_days;
+        $groupedDeadline = $league->grouped_deadline;
+        $deadlineDays = $league->deadline_days;
 
         // Precompute first kickoff per group for grouped_deadline mode
         $groupFirstDate = [];
         if ($groupedDeadline) {
             foreach ($allMatches as $m) {
                 $d = strtotime($m['date']);
-                if (!isset($groupFirstDate[$m['group']]) || $d < $groupFirstDate[$m['group']]) {
+                if (! isset($groupFirstDate[$m['group']]) || $d < $groupFirstDate[$m['group']]) {
                     $groupFirstDate[$m['group']] = $d;
                 }
             }
@@ -445,14 +454,14 @@ class LeagueController extends Controller
                 continue;
             }
 
-            $kickoff      = strtotime($match['date']);
+            $kickoff = strtotime($match['date']);
             $matchStarted = $kickoff <= $now->timestamp;
 
-            $reference  = $groupedDeadline
+            $reference = $groupedDeadline
                 ? ($groupFirstDate[$match['group']] ?? $kickoff)
                 : $kickoff;
             $deadlineTs = $reference - ($deadlineDays * 86400);
-            $locked     = $now->timestamp >= $deadlineTs;
+            $locked = $now->timestamp >= $deadlineTs;
 
             $matchPredMap = $predMap[$match['id']] ?? [];
 
@@ -470,17 +479,17 @@ class LeagueController extends Controller
                     ($uname === $currentUsername || $matchStarted || $predictionsVisibleBefore)
                 ) {
                     $memberPredictions[] = [
-                        'username'          => $uname,
+                        'username' => $uname,
                         'predicted_score_a' => $pred->predicted_score_a,
                         'predicted_score_b' => $pred->predicted_score_b,
                     ];
                 }
             }
 
-            $match['userPrediction']    = $userPred;
+            $match['userPrediction'] = $userPred;
             $match['memberPredictions'] = $memberPredictions;
-            $match['locked']            = $locked;
-            $match['deadline']          = date('c', $deadlineTs);
+            $match['locked'] = $locked;
+            $match['deadline'] = date('c', $deadlineTs);
 
             $matches[] = $match;
         }

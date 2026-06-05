@@ -26,23 +26,27 @@
 <body>
     <div class="menu__container">
         <div class="menu">
-            <a class="logo" href="{{ url('/') }}">THE REAL DEAL</a>
+            <a class="logo" href="{{ url('/') }}">{{ __('app.brand') }}</a>
             <nav class="menu__nav">
                 @auth
                     <a class="nav__link {{ request()->is('profile') ? 'nav__link--active' : '' }}"
                         href="{{ route('profile.show') }}">{{ Auth::user()->username }}</a>
-                    <a class="nav__link" href="{{ url('/leagues') }}">MY LEAGUES</a>
+                    <a class="nav__link" href="{{ url('/leagues') }}">{{ __('app.nav.my_leagues') }}</a>
                     <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                         @csrf
-                        <button type="submit" class="nav__link nav__link--button">LOGOUT</button>
+                        <button type="submit" class="nav__link nav__link--button">{{ __('app.nav.logout') }}</button>
                     </form>
                 @else
                     <a class="nav__link {{ request()->is('register') ? 'nav__link--active' : '' }}"
-                        href="{{ route('register') }}">REGISTER</a>
+                        href="{{ route('register') }}">{{ __('app.nav.register') }}</a>
                     <a class="nav__link {{ request()->is('login') ? 'nav__link--active' : '' }}"
-                        href="{{ route('login') }}">LOGIN</a>
+                        href="{{ route('login') }}">{{ __('app.nav.login') }}</a>
                 @endauth
-                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                <a class="nav__link" href="{{ route('language.switch', app()->getLocale() === 'es' ? 'en' : 'es') }}"
+                    aria-label="{{ __('app.language.label') }}">
+                    {{ app()->getLocale() === 'es' ? 'EN' : 'ES' }}
+                </a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="{{ __('app.nav.toggle_theme') }}">
                     <x-lucide-moon class="theme-toggle__moon" width="32" height="32" />
                     <x-lucide-sun class="theme-toggle__sun" width="32" height="32" />
                 </button>

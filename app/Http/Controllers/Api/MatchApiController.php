@@ -21,20 +21,20 @@ class MatchApiController extends Controller
             ->where('status', 'approved')
             ->first();
 
-        if (!$membership) {
-            return response()->json(['error' => 'You are not an approved member of this league.'], 403);
+        if (! $membership) {
+            return response()->json(['error' => __('app.api.approved_member_required')], 403);
         }
 
         // Gate: match exists
         $match = WcMatches::find($matchId);
-        if (!$match) {
-            return response()->json(['error' => 'Match not found.'], 404);
+        if (! $match) {
+            return response()->json(['error' => __('app.api.match_not_found')], 404);
         }
 
         // Gate: not locked (deadline has not passed)
-        $league      = $membership->league;
-        $now         = now()->timestamp;
-        $kickoff     = strtotime($match['date']);
+        $league = $membership->league;
+        $now = now()->timestamp;
+        $kickoff = strtotime($match['date']);
 
         if ($league->grouped_deadline) {
             $groupFirstDate = null;
@@ -54,7 +54,7 @@ class MatchApiController extends Controller
         $deadlineTs = $reference - ($league->deadline_days * 86400);
 
         if ($now >= $deadlineTs) {
-            return response()->json(['error' => 'Predictions are locked for this match.'], 403);
+            return response()->json(['error' => __('app.api.prediction_locked')], 403);
         }
 
         $validated = $request->validate([
@@ -72,10 +72,10 @@ class MatchApiController extends Controller
             [
                 'predicted_score_a' => $validated['predicted_score_a'],
                 'predicted_score_b' => $validated['predicted_score_b'],
-                'league_id'         => $leagueId,
+                'league_id' => $leagueId,
             ]
         );
 
-        return response()->json(['message' => 'Prediction saved.']);
+        return response()->json(['message' => __('app.api.prediction_saved')]);
     }
 }
