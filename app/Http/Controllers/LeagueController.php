@@ -6,6 +6,7 @@ use App\Data\WcMatches;
 use App\Models\League;
 use App\Models\MatchPrediction;
 use App\Models\User;
+use App\Notifications\LeagueJoinRequestNotification;
 use App\Notifications\LeagueRulesNotification;
 use App\Services\LeagueRulesSummary;
 use Illuminate\Http\Request;
@@ -343,6 +344,13 @@ class LeagueController extends Controller
             (new LeagueRulesNotification($rules->forLeague($league), 'joined'))
                 ->locale(Auth::user()->locale ?? config('app.locale'))
         );
+
+        if ($league->manager) {
+            $league->manager->notify(
+                (new LeagueJoinRequestNotification($league, Auth::user()))
+                    ->locale($league->manager->locale ?? config('app.locale'))
+            );
+        }
 
         return redirect()->route('leagues.show', $league->id)
             ->with('success', __('app.flash.join_request_sent'));

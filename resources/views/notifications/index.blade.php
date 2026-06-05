@@ -64,14 +64,22 @@
                             @endif
                         </div>
 
-                        @if (!$notification->read_at)
-                            <form method="POST" action="{{ route('notifications.read', $notification->id) }}">
-                                @csrf
-                                <button class="btn btn--ghost btn--sm" type="submit">
-                                    {{ __('app.notifications.mark_read') }}
-                                </button>
-                            </form>
-                        @endif
+                        <div class="notification-card__actions">
+                            @if (!empty($notification->data['action_url']))
+                                <a class="btn btn--primary btn--sm" href="{{ $notification->data['action_url'] }}">
+                                    {{ $notification->data['action_label'] ?? __('app.notifications.open') }}
+                                </a>
+                            @endif
+
+                            @if (!$notification->read_at)
+                                <form method="POST" action="{{ route('notifications.read', $notification->id) }}">
+                                    @csrf
+                                    <button class="btn btn--ghost btn--sm" type="submit">
+                                        {{ __('app.notifications.mark_read') }}
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </article>
                 @empty
                     <p class="notifications__empty">{{ __('app.notifications.no_notifications') }}</p>

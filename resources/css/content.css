@@ -195,6 +195,15 @@
     opacity: 0.75;
 }
 
+.notification-card__actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
 .rules-list {
     margin: 0;
     padding-left: 20px;
