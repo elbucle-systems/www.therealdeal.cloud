@@ -41,7 +41,7 @@ class DeadlineReminderService
             ->all();
 
         $predictedLookup = array_fill_keys($predictedMatchIds, true);
-        $matches = collect(WcMatches::all());
+        $matches = collect(WcMatches::deadlineReminderMatches());
 
         if ($league->grouped_deadline) {
             return $matches

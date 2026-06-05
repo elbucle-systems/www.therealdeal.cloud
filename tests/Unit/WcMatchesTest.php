@@ -53,4 +53,16 @@ class WcMatchesTest extends TestCase
         $this->assertSame('2026-06-10T19:00:00Z', WcMatches::deadline($match, 1)->toIso8601ZuluString());
         $this->assertSame('2026-06-11T19:00:00Z', WcMatches::deadline($match, 0)->toIso8601ZuluString());
     }
+
+    public function test_deadline_reminders_only_include_group_stage_matches(): void
+    {
+        $matches = WcMatches::deadlineReminderMatches();
+
+        $this->assertCount(72, $matches);
+        $this->assertTrue(collect($matches)->every(
+            fn (array $match) => str_starts_with($match['group'], 'Group ')
+        ));
+        $this->assertFalse(WcMatches::receivesDeadlineReminders(WcMatches::find('R32_1')));
+        $this->assertFalse(WcMatches::receivesDeadlineReminders(WcMatches::find('FINAL')));
+    }
 }

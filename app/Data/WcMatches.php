@@ -176,6 +176,16 @@ final class WcMatches
         return self::kickoff($match)->subDays($deadlineDays);
     }
 
+    public static function receivesDeadlineReminders(array $match): bool
+    {
+        return str_starts_with($match['group'], 'Group ');
+    }
+
+    public static function deadlineReminderMatches(): array
+    {
+        return array_values(array_filter(self::all(), fn (array $match) => self::receivesDeadlineReminders($match)));
+    }
+
     public static function groupedByGroup(): array
     {
         $groups = [];

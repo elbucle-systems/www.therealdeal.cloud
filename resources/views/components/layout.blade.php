@@ -29,28 +29,48 @@
             <a class="logo" href="{{ url('/') }}">{{ __('app.brand') }}</a>
             <nav class="menu__nav">
                 @auth
+                    @php($unreadNotificationsCount = Auth::user()->unreadNotifications()->count())
+
                     <a class="nav__link {{ request()->is('profile') ? 'nav__link--active' : '' }}"
-                        href="{{ route('profile.show') }}">{{ Auth::user()->username }}</a>
-                    <a class="nav__link" href="{{ url('/leagues') }}">{{ __('app.nav.my_leagues') }}</a>
+                        href="{{ route('profile.show') }}">
+                        <x-lucide-circle-user width="18" height="18" />
+                        {{ Auth::user()->username }}
+                    </a>
+                    <a class="nav__link {{ request()->is('leagues*') ? 'nav__link--active' : '' }}"
+                        href="{{ route('leagues.index') }}">
+                        <x-lucide-trophy width="18" height="18" />
+                        {{ __('app.nav.my_leagues') }}
+                    </a>
                     <a class="nav__link {{ request()->is('notifications') ? 'nav__link--active' : '' }}"
                         href="{{ route('notifications.index') }}">
+                        <x-lucide-bell width="18" height="18" />
                         {{ __('app.nav.notifications') }}
-                        @if (Auth::user()->unreadNotifications()->exists())
-                            <span class="nav__badge">{{ Auth::user()->unreadNotifications()->count() }}</span>
+                        @if ($unreadNotificationsCount > 0)
+                            <span class="nav__badge">{{ $unreadNotificationsCount > 99 ? '99+' : $unreadNotificationsCount }}</span>
                         @endif
                     </a>
                     <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                         @csrf
-                        <button type="submit" class="nav__link nav__link--button">{{ __('app.nav.logout') }}</button>
+                        <button type="submit" class="nav__link nav__link--button">
+                            <x-lucide-log-out width="18" height="18" />
+                            {{ __('app.nav.logout') }}
+                        </button>
                     </form>
                 @else
                     <a class="nav__link {{ request()->is('register') ? 'nav__link--active' : '' }}"
-                        href="{{ route('register') }}">{{ __('app.nav.register') }}</a>
+                        href="{{ route('register') }}">
+                        <x-lucide-user-plus width="18" height="18" />
+                        {{ __('app.nav.register') }}
+                    </a>
                     <a class="nav__link {{ request()->is('login') ? 'nav__link--active' : '' }}"
-                        href="{{ route('login') }}">{{ __('app.nav.login') }}</a>
+                        href="{{ route('login') }}">
+                        <x-lucide-log-in width="18" height="18" />
+                        {{ __('app.nav.login') }}
+                    </a>
                 @endauth
                 <a class="nav__link" href="{{ route('language.switch', app()->getLocale() === 'es' ? 'en' : 'es') }}"
                     aria-label="{{ __('app.language.label') }}">
+                    <x-lucide-languages width="18" height="18" />
                     {{ app()->getLocale() === 'es' ? 'EN' : 'ES' }}
                 </a>
                 <button id="theme-toggle" class="theme-toggle" aria-label="{{ __('app.nav.toggle_theme') }}">

@@ -70,13 +70,18 @@ body {
     font-size: 18px;
     letter-spacing: 0.1em;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 32px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    line-height: 1;
 }
 
 .nav__link:hover {
     color: var(--background);
     background-color: var(--foreground);
-    padding: 4px 8px;
-    border-radius: 4px;
     transition: all 0.2s ease-in-out;
 }
 
@@ -91,8 +96,6 @@ body {
 .nav__link--active {
     color: var(--background);
     background-color: var(--foreground);
-    padding: 4px 8px;
-    border-radius: 4px;
 }
 
 .nav__badge {
@@ -101,7 +104,6 @@ body {
     justify-content: center;
     min-width: 20px;
     height: 20px;
-    margin-left: 4px;
     padding: 0 5px;
     border-radius: 999px;
     background: var(--secondary-orange);
