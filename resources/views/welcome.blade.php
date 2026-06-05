@@ -30,83 +30,84 @@
             </div>
         </section>
 
-        {{-- Features --}}
+        {{-- What to expect --}}
         <section class="landing__features">
-            <h2 class="landing__section-title">{{ __('app.landing.how_it_works') }}</h2>
-            <div class="landing__feature-grid">
+            <div class="landing__section-heading">
+                <h2 class="landing__section-title">{{ __('app.landing.expect_title') }}</h2>
+                <p class="landing__section-sub">{{ __('app.landing.expect_subtitle') }}</p>
+            </div>
 
+            <div class="landing__feature-grid">
                 <div class="landing__feature-card">
                     <span class="landing__feature-icon">
                         <x-lucide-users width="28" height="28" />
                     </span>
-                    <h3 class="landing__feature-title">{{ __('app.landing.features.private_title') }}</h3>
-                    <p class="landing__feature-body">{{ __('app.landing.features.private_body') }}</p>
+                    <h3 class="landing__feature-title">{{ __('app.landing.expect.private_title') }}</h3>
+                    <p class="landing__feature-body">{{ __('app.landing.expect.private_body') }}</p>
                 </div>
 
                 <div class="landing__feature-card">
                     <span class="landing__feature-icon">
-                        <x-lucide-key-round width="28" height="28" />
+                        <x-lucide-clipboard-check width="28" height="28" />
                     </span>
-                    <h3 class="landing__feature-title">{{ __('app.landing.features.invite_title') }}</h3>
-                    <p class="landing__feature-body">{{ __('app.landing.features.invite_body') }}</p>
+                    <h3 class="landing__feature-title">{{ __('app.landing.expect.rules_title') }}</h3>
+                    <p class="landing__feature-body">{{ __('app.landing.expect.rules_body') }}</p>
                 </div>
 
                 <div class="landing__feature-card">
                     <span class="landing__feature-icon">
-                        <x-lucide-calendar width="28" height="28" />
+                        <x-lucide-clock width="28" height="28" />
                     </span>
-                    <h3 class="landing__feature-title">{{ __('app.landing.features.predict_title') }}</h3>
-                    <p class="landing__feature-body">{{ __('app.landing.features.predict_body') }}</p>
+                    <h3 class="landing__feature-title">{{ __('app.landing.expect.deadlines_title') }}</h3>
+                    <p class="landing__feature-body">{{ __('app.landing.expect.deadlines_body') }}</p>
                 </div>
 
                 <div class="landing__feature-card">
                     <span class="landing__feature-icon">
-                        <x-lucide-bar-chart-2 width="28" height="28" />
+                        <x-lucide-bell-ring width="28" height="28" />
                     </span>
-                    <h3 class="landing__feature-title">{{ __('app.landing.features.standings_title') }}</h3>
-                    <p class="landing__feature-body">{{ __('app.landing.features.standings_body') }}</p>
+                    <h3 class="landing__feature-title">{{ __('app.landing.expect.notifications_title') }}</h3>
+                    <p class="landing__feature-body">{{ __('app.landing.expect.notifications_body') }}</p>
                 </div>
-
-                <div class="landing__feature-card">
-                    <span class="landing__feature-icon">
-                        <x-lucide-trophy width="28" height="28" />
-                    </span>
-                    <h3 class="landing__feature-title">{{ __('app.landing.features.scoring_title') }}</h3>
-                    <p class="landing__feature-body">{{ __('app.landing.features.scoring_body') }}</p>
-                </div>
-
             </div>
         </section>
 
         {{-- Steps --}}
         <section class="landing__steps">
-            <h2 class="landing__section-title">{{ __('app.landing.steps_title') }}</h2>
+            <div class="landing__section-heading">
+                <h2 class="landing__section-title">{{ __('app.landing.steps_title') }}</h2>
+                <p class="landing__section-sub">{{ __('app.landing.steps_subtitle') }}</p>
+            </div>
+
             <div class="landing__step-list">
-
-                <div class="landing__step">
-                    <span class="landing__step-number">1</span>
-                    <div>
-                        <h3 class="landing__step-title">{{ __('app.landing.steps.register_title') }}</h3>
-                        <p class="landing__step-body">{{ __('app.landing.steps.register_body') }}</p>
+                @foreach (__('app.landing.steps') as $index => $step)
+                    <div class="landing__step">
+                        <span class="landing__step-number">{{ $index + 1 }}</span>
+                        <div>
+                            <h3 class="landing__step-title">{{ $step['title'] }}</h3>
+                            <p class="landing__step-body">{{ $step['body'] }}</p>
+                        </div>
                     </div>
-                </div>
+                @endforeach
+            </div>
+        </section>
 
-                <div class="landing__step">
-                    <span class="landing__step-number">2</span>
-                    <div>
-                        <h3 class="landing__step-title">{{ __('app.landing.steps.league_title') }}</h3>
-                        <p class="landing__step-body">{{ __('app.landing.steps.league_body') }}</p>
+        {{-- League rules --}}
+        <section class="landing__rules">
+            <div class="landing__section-heading">
+                <h2 class="landing__section-title">{{ __('app.landing.rules_title') }}</h2>
+                <p class="landing__section-sub">{{ __('app.landing.rules_subtitle') }}</p>
+            </div>
+
+            <div class="landing__rule-list">
+                @foreach (__('app.landing.rule_details') as $rule)
+                    <div class="landing__rule">
+                        <div>
+                            <h3 class="landing__rule-title">{{ $rule['title'] }}</h3>
+                            <p class="landing__rule-body">{{ $rule['body'] }}</p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="landing__step">
-                    <span class="landing__step-number">3</span>
-                    <div>
-                        <h3 class="landing__step-title">{{ __('app.landing.steps.compete_title') }}</h3>
-                        <p class="landing__step-body">{{ __('app.landing.steps.compete_body') }}</p>
-                    </div>
-                </div>
-
+                @endforeach
             </div>
         </section>
 

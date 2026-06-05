@@ -696,9 +696,26 @@
 .landing__section-title {
     font-family: "Chelsea Market", cursive;
     font-size: 28px;
-    margin: 0 0 32px 0;
+    margin: 0;
     color: var(--foreground);
     text-align: center;
+}
+
+.landing__section-heading {
+    max-width: 720px;
+    margin: 0 auto 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+}
+
+.landing__section-sub {
+    font-family: "Montserrat", sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    opacity: 0.68;
+    margin: 0;
 }
 
 .landing__features {
@@ -714,7 +731,7 @@
 
 .landing__feature-card {
     background-color: var(--muted);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 28px 24px;
     display: flex;
     flex-direction: column;
@@ -752,8 +769,8 @@
 .landing__step-list {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-    max-width: 680px;
+    gap: 22px;
+    max-width: 760px;
     margin: 0 auto;
     width: 100%;
 }
@@ -793,6 +810,37 @@
     margin: 0;
 }
 
+.landing__rules {
+    display: flex;
+    flex-direction: column;
+}
+
+.landing__rule-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.landing__rule {
+    border-top: 3px solid var(--primary-green);
+    padding: 18px 4px 0;
+}
+
+.landing__rule-title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 17px;
+    margin: 0 0 8px;
+    color: var(--foreground);
+}
+
+.landing__rule-body {
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    opacity: 0.7;
+    margin: 0;
+}
+
 .landing__bottom-cta {
     display: flex;
     flex-direction: column;
@@ -800,7 +848,7 @@
     gap: 24px;
     padding: 60px 20px;
     background-color: var(--muted);
-    border-radius: 16px;
+    border-radius: 8px;
     text-align: center;
 }
 
@@ -823,6 +871,20 @@
     }
 
     .landing__feature-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .landing__step {
+        gap: 16px;
+    }
+
+    .landing__step-number {
+        width: 42px;
+        height: 42px;
+        font-size: 22px;
+    }
+
+    .landing__rule-list {
         grid-template-columns: 1fr;
     }
 }
