@@ -54,7 +54,7 @@ return [
             'host' => env('MAIL_HOST', 'smtp.gmail.com'),
             'port' => env('MAIL_PORT', 587),
             'username' => env('MAIL_USERNAME') ?: env('MAIL_FROM_ADDRESS'),
-            'tls' => env('MAIL_TLS', true),
+            'tls' => env('MAIL_TLS'),
         ],
 
         'ses' => [

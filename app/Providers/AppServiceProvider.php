@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
         Mail::extend('gmail_oauth', function (array $config = []) {
             $host = $config['host'] ?? 'smtp.gmail.com';
             $port = (int) ($config['port'] ?? 587);
-            $tls = $config['tls'] ?? true;
             $username = $config['username'] ?? config('mail.from.address');
+            $tls = $config['tls'] ?? $port === 465;
 
             $transport = new EsmtpTransport($host, $port, $tls);
             $transport->setUsername((string) $username);
