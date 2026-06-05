@@ -95,6 +95,23 @@ body {
     border-radius: 4px;
 }
 
+.nav__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--secondary-orange);
+    color: #fff;
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    letter-spacing: 0;
+    vertical-align: middle;
+}
+
 .logo {
     font-size: 36px;
     color: var(--foreground);

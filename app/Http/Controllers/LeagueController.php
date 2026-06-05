@@ -69,7 +69,7 @@ class LeagueController extends Controller
 
         $playedMatches = array_filter(
             WcMatches::all(),
-            fn ($m) => strtotime($m['date']) < $now->timestamp
+            fn ($m) => WcMatches::kickoff($m)->lt($now)
                 && $m['teamAGoals'] !== null
                 && $m['teamBGoals'] !== null
         );
@@ -441,9 +441,9 @@ class LeagueController extends Controller
         $groupFirstDate = [];
         if ($groupedDeadline) {
             foreach ($allMatches as $m) {
-                $d = strtotime($m['date']);
-                if (! isset($groupFirstDate[$m['group']]) || $d < $groupFirstDate[$m['group']]) {
-                    $groupFirstDate[$m['group']] = $d;
+                $kickoff = WcMatches::kickoff($m);
+                if (! isset($groupFirstDate[$m['group']]) || $kickoff->lt($groupFirstDate[$m['group']])) {
+                    $groupFirstDate[$m['group']] = $kickoff;
                 }
             }
         }
@@ -454,14 +454,14 @@ class LeagueController extends Controller
                 continue;
             }
 
-            $kickoff = strtotime($match['date']);
-            $matchStarted = $kickoff <= $now->timestamp;
+            $kickoff = WcMatches::kickoff($match);
+            $matchStarted = $kickoff->lte($now);
 
             $reference = $groupedDeadline
                 ? ($groupFirstDate[$match['group']] ?? $kickoff)
                 : $kickoff;
-            $deadlineTs = $reference - ($deadlineDays * 86400);
-            $locked = $now->timestamp >= $deadlineTs;
+            $deadline = $reference->subDays($deadlineDays);
+            $locked = $now->gte($deadline);
 
             $matchPredMap = $predMap[$match['id']] ?? [];
 
@@ -489,7 +489,7 @@ class LeagueController extends Controller
             $match['userPrediction'] = $userPred;
             $match['memberPredictions'] = $memberPredictions;
             $match['locked'] = $locked;
-            $match['deadline'] = date('c', $deadlineTs);
+            $match['deadline'] = $deadline->toIso8601ZuluString();
 
             $matches[] = $match;
         }

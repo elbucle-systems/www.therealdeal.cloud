@@ -32,6 +32,13 @@
                     <a class="nav__link {{ request()->is('profile') ? 'nav__link--active' : '' }}"
                         href="{{ route('profile.show') }}">{{ Auth::user()->username }}</a>
                     <a class="nav__link" href="{{ url('/leagues') }}">{{ __('app.nav.my_leagues') }}</a>
+                    <a class="nav__link {{ request()->is('notifications') ? 'nav__link--active' : '' }}"
+                        href="{{ route('notifications.index') }}">
+                        {{ __('app.nav.notifications') }}
+                        @if (Auth::user()->unreadNotifications()->exists())
+                            <span class="nav__badge">{{ Auth::user()->unreadNotifications()->count() }}</span>
+                        @endif
+                    </a>
                     <form method="POST" action="{{ route('logout') }}" style="display:inline;">
                         @csrf
                         <button type="submit" class="nav__link nav__link--button">{{ __('app.nav.logout') }}</button>

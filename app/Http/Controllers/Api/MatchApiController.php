@@ -33,16 +33,16 @@ class MatchApiController extends Controller
 
         // Gate: not locked (deadline has not passed)
         $league = $membership->league;
-        $now = now()->timestamp;
-        $kickoff = strtotime($match['date']);
+        $now = now();
+        $kickoff = WcMatches::kickoff($match);
 
         if ($league->grouped_deadline) {
             $groupFirstDate = null;
             foreach (WcMatches::all() as $m) {
                 if ($m['group'] === $match['group']) {
-                    $d = strtotime($m['date']);
-                    if ($groupFirstDate === null || $d < $groupFirstDate) {
-                        $groupFirstDate = $d;
+                    $date = WcMatches::kickoff($m);
+                    if ($groupFirstDate === null || $date->lt($groupFirstDate)) {
+                        $groupFirstDate = $date;
                     }
                 }
             }
@@ -51,9 +51,9 @@ class MatchApiController extends Controller
             $reference = $kickoff;
         }
 
-        $deadlineTs = $reference - ($league->deadline_days * 86400);
+        $deadline = $reference->subDays($league->deadline_days);
 
-        if ($now >= $deadlineTs) {
+        if ($now->gte($deadline)) {
             return response()->json(['error' => __('app.api.prediction_locked')], 403);
         }
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\MatchApiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeagueController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,10 @@ Route::get('/language/{locale}', function (string $locale) {
     abort_unless(array_key_exists($locale, config('app.supported_locales')), 404);
 
     session(['locale' => $locale]);
+
+    if (auth()->check()) {
+        auth()->user()->forceFill(['locale' => $locale])->save();
+    }
 
     return back();
 })->name('language.switch');
@@ -41,6 +46,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile/username', [ProfileController::class, 'updateUsername'])->name('profile.username');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
     Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues.index');
     Route::get('/leagues/create', [LeagueController::class, 'create'])->name('leagues.create');

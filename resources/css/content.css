@@ -102,3 +102,95 @@
     letter-spacing: 0.04em;
     word-break: break-all;
 }
+
+/* Notifications */
+.notifications {
+    width: 100%;
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.notifications__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.notifications__title,
+.notifications__section-title {
+    margin: 0;
+    font-family: "Chelsea Market", cursive;
+    letter-spacing: 0.08em;
+}
+
+.notifications__title {
+    font-size: 30px;
+}
+
+.notifications__subtitle,
+.notifications__empty,
+.notification-card__body,
+.notification-card__meta {
+    font-family: "Montserrat", sans-serif;
+}
+
+.notifications__subtitle {
+    margin: 8px 0 0;
+    max-width: 680px;
+    opacity: 0.75;
+}
+
+.notifications__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notifications__section-title {
+    font-size: 20px;
+}
+
+.notifications__empty {
+    margin: 0;
+    color: var(--foreground);
+    opacity: 0.72;
+}
+
+.notification-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    padding: 18px;
+    border: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent);
+    background-color: var(--muted);
+    border-radius: 8px;
+}
+
+.notification-card--unread {
+    border-color: var(--secondary-orange);
+}
+
+.notification-card--deadline {
+    border-color: var(--primary-green);
+}
+
+.notification-card__title {
+    margin: 0;
+    font-family: "Saira Stencil", cursive;
+    font-size: 17px;
+    letter-spacing: 0.04em;
+}
+
+.notification-card__body {
+    margin: 6px 0 0;
+}
+
+.notification-card__meta {
+    margin: 8px 0 0;
+    font-size: 13px;
+    opacity: 0.75;
+}
