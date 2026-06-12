@@ -12,8 +12,8 @@ final class WcMatches
     {
         return [
             // ---------- GROUP A ----------
-            ['id' => 'A1', 'group' => 'Group A', 'date' => '2026-06-11T19:00:00Z', 'matchNumber' => 1,  'teamA' => 'Mexico',              'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'South Africa'],
-            ['id' => 'A2', 'group' => 'Group A', 'date' => '2026-06-12T02:00:00Z', 'matchNumber' => 2,  'teamA' => 'South Korea',         'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Czech Republic'],
+            ['id' => 'A1', 'group' => 'Group A', 'date' => '2026-06-11T19:00:00Z', 'matchNumber' => 1,  'teamA' => 'Mexico',              'teamAGoals' => 2, 'teamBGoals' => 0, 'teamB' => 'South Africa'],
+            ['id' => 'A2', 'group' => 'Group A', 'date' => '2026-06-12T02:00:00Z', 'matchNumber' => 2,  'teamA' => 'South Korea',         'teamAGoals' => 2, 'teamBGoals' => 1, 'teamB' => 'Czech Republic'],
             ['id' => 'A3', 'group' => 'Group A', 'date' => '2026-06-18T16:00:00Z', 'matchNumber' => 25, 'teamA' => 'South Africa',        'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Czech Republic'],
             ['id' => 'A4', 'group' => 'Group A', 'date' => '2026-06-19T01:00:00Z', 'matchNumber' => 27, 'teamA' => 'Mexico',              'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'South Korea'],
             ['id' => 'A5', 'group' => 'Group A', 'date' => '2026-06-25T01:00:00Z', 'matchNumber' => 53, 'teamA' => 'Mexico',              'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Czech Republic'],
@@ -183,7 +183,7 @@ final class WcMatches
 
     public static function deadlineReminderMatches(): array
     {
-        return array_values(array_filter(self::all(), fn (array $match) => self::receivesDeadlineReminders($match)));
+        return array_values(array_filter(self::all(), fn(array $match) => self::receivesDeadlineReminders($match)));
     }
 
     public static function groupedByGroup(): array
