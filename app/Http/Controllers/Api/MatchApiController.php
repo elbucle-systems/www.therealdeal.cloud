@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Data\WcMatches;
 use App\Http\Controllers\Controller;
 use App\Models\LeagueMember;
 use App\Models\MatchPrediction;
+use App\Services\WorldCupMatchRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,7 +26,8 @@ class MatchApiController extends Controller
         }
 
         // Gate: match exists
-        $match = WcMatches::find($matchId);
+        $matchRepository = app(WorldCupMatchRepository::class);
+        $match = $matchRepository->find($matchId);
         if (! $match) {
             return response()->json(['error' => __('app.api.match_not_found')], 404);
         }
@@ -34,13 +35,13 @@ class MatchApiController extends Controller
         // Gate: not locked (deadline has not passed)
         $league = $membership->league;
         $now = now();
-        $kickoff = WcMatches::kickoff($match);
+        $kickoff = $matchRepository->kickoff($match);
 
         if ($league->grouped_deadline) {
             $groupFirstDate = null;
-            foreach (WcMatches::all() as $m) {
+            foreach ($matchRepository->all() as $m) {
                 if ($m['group'] === $match['group']) {
-                    $date = WcMatches::kickoff($m);
+                    $date = $matchRepository->kickoff($m);
                     if ($groupFirstDate === null || $date->lt($groupFirstDate)) {
                         $groupFirstDate = $date;
                     }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Data\WcMatches;
 use App\Models\League;
 use App\Models\MatchPrediction;
 use App\Models\User;
@@ -10,6 +9,7 @@ use App\Notifications\LeagueJoinRequestNotification;
 use App\Notifications\LeagueRulesNotification;
 use App\Services\LeagueRulesSummary;
 use App\Services\StandingsCalculator;
+use App\Services\WorldCupMatchRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,6 +47,7 @@ class LeagueController extends Controller
     private function computeStandings(League $league, $approvedMembers = null): array
     {
         $now = now();
+        $matchRepository = app(WorldCupMatchRepository::class);
 
         if ($approvedMembers === null) {
             $approvedMembers = $league->members()
@@ -72,8 +73,8 @@ class LeagueController extends Controller
         $pointsPerResult = $league->points_per_result;
 
         $playedMatches = array_filter(
-            WcMatches::all(),
-            fn ($m) => WcMatches::kickoff($m)->lt($now)
+            $matchRepository->all(),
+            fn ($m) => $matchRepository->kickoff($m)->lt($now)
                 && $m['teamAGoals'] !== null
                 && $m['teamBGoals'] !== null
         );
@@ -472,6 +473,7 @@ class LeagueController extends Controller
     {
         $userId = Auth::id();
         $league = League::findOrFail($id);
+        $matchRepository = app(WorldCupMatchRepository::class);
 
         $allMembers = $league->members()->with('user:id,username')->get();
         $membership = $allMembers->firstWhere('user_id', $userId);
@@ -484,7 +486,9 @@ class LeagueController extends Controller
         $currentUsername = Auth::user()->username;
 
         // All stage keys in order (for the nav)
-        $allMatches = WcMatches::all();
+        $allMatches = $matchRepository->all();
+        $fifaResultsLastUpdated = $matchRepository->lastFetchedAt();
+        $fifaResultsUnavailable = $fifaResultsLastUpdated === null || $allMatches === [];
         $allStages = array_values(array_unique(array_column($allMatches, 'group')));
         $groupStageKeys = array_values(array_filter($allStages, fn ($k) => str_starts_with($k, 'Group ')));
         $knockoutKeys = array_values(array_filter($allStages, fn ($k) => ! str_starts_with($k, 'Group ')));
@@ -523,7 +527,7 @@ class LeagueController extends Controller
         $groupFirstDate = [];
         if ($groupedDeadline) {
             foreach ($allMatches as $m) {
-                $kickoff = WcMatches::kickoff($m);
+                $kickoff = $matchRepository->kickoff($m);
                 if (! isset($groupFirstDate[$m['group']]) || $kickoff->lt($groupFirstDate[$m['group']])) {
                     $groupFirstDate[$m['group']] = $kickoff;
                 }
@@ -547,7 +551,7 @@ class LeagueController extends Controller
                 continue;
             }
 
-            $kickoff = WcMatches::kickoff($match);
+            $kickoff = $matchRepository->kickoff($match);
             $matchStarted = $kickoff->lte($now);
 
             $reference = $groupedDeadline
@@ -623,7 +627,9 @@ class LeagueController extends Controller
             'knockoutKeys',
             'currentUsername',
             'realStandings',
-            'predictedStandingsByUser'
+            'predictedStandingsByUser',
+            'fifaResultsLastUpdated',
+            'fifaResultsUnavailable'
         ));
     }
 }

@@ -34,6 +34,16 @@ return [
         'refresh_token' => env('GOOGLE_REFRESH_TOKEN'),
     ],
 
+    'fifa' => [
+        'base_url' => env('FIFA_RESULTS_BASE_URL', 'https://api.fifa.com/api/v3'),
+        'competition_id' => env('FIFA_WORLD_CUP_COMPETITION_ID', '17'),
+        'season_id' => env('FIFA_WORLD_CUP_SEASON_ID', '285023'),
+        'user_agent' => env('FIFA_RESULTS_USER_AGENT', 'The Real Deal World Cup Pool/1.0'),
+        'verify_ssl' => env('FIFA_RESULTS_VERIFY_SSL', true),
+        'cache_store' => env('FIFA_RESULTS_CACHE_STORE', 'file'),
+        'cache_ttl_seconds' => env('FIFA_RESULTS_CACHE_TTL_SECONDS', 300),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

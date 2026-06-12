@@ -192,6 +192,8 @@ return [
         'standings' => 'TABLA',
         'real_standings' => 'Tabla real',
         'predicted_standings_for' => 'Predicciones de :username',
+        'fifa_results_last_updated' => 'Resultados FIFA actualizados:',
+        'fifa_results_unavailable' => 'Los resultados FIFA aun no estan disponibles.',
         'team' => 'Equipo',
         'played_short' => 'PJ',
         'wins_short' => 'G',

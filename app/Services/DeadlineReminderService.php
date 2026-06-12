@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Data\WcMatches;
 use App\Models\League;
 use App\Models\MatchPrediction;
 use App\Models\User;
@@ -11,6 +10,8 @@ use Illuminate\Support\Collection;
 
 class DeadlineReminderService
 {
+    public function __construct(private readonly WorldCupMatchRepository $matches) {}
+
     /**
      * @return array<int, array<string, mixed>>
      */
@@ -41,7 +42,7 @@ class DeadlineReminderService
             ->all();
 
         $predictedLookup = array_fill_keys($predictedMatchIds, true);
-        $matches = collect(WcMatches::deadlineReminderMatches());
+        $matches = collect($this->matches->deadlineReminderMatches());
 
         if ($league->grouped_deadline) {
             return $matches
@@ -65,7 +66,7 @@ class DeadlineReminderService
     private function groupDeadline(League $league, string $group, Collection $matches, array $predictedLookup, CarbonImmutable $now, ?CarbonImmutable $windowEnd): ?array
     {
         $deadline = $matches
-            ->map(fn (array $match) => WcMatches::kickoff($match))
+            ->map(fn (array $match) => $this->matches->kickoff($match))
             ->sortBy(fn (CarbonImmutable $kickoff) => $kickoff->timestamp)
             ->first()
             ->subDays($league->deadline_days);
@@ -107,7 +108,7 @@ class DeadlineReminderService
             return null;
         }
 
-        $deadline = WcMatches::deadline($match, $league->deadline_days);
+        $deadline = $this->matches->deadline($match, $league->deadline_days);
 
         if ($this->outsideWindow($deadline, $now, $windowEnd)) {
             return null;

@@ -5,7 +5,9 @@ namespace Tests\Unit;
 use App\Models\League;
 use App\Models\User;
 use App\Services\DeadlineReminderService;
+use App\Services\WorldCupMatchRepository;
 use Carbon\CarbonImmutable;
+use Mockery;
 use Tests\TestCase;
 
 class DeadlineReminderServiceTest extends TestCase
@@ -19,9 +21,29 @@ class DeadlineReminderServiceTest extends TestCase
         $this->artisan('migrate:fresh');
     }
 
+    private function useFakeMatches(): void
+    {
+        $matches = [
+            ['id' => 'A1', 'group' => 'Group A', 'date' => '2026-06-11T19:00:00Z', 'matchNumber' => 1, 'teamA' => 'Mexico', 'teamB' => 'South Africa'],
+            ['id' => 'B1', 'group' => 'Group B', 'date' => '2026-06-12T19:00:00Z', 'matchNumber' => 3, 'teamA' => 'Canada', 'teamB' => 'Bosnia and Herzegovina'],
+        ];
+
+        $repository = Mockery::mock(WorldCupMatchRepository::class);
+        $repository->shouldReceive('deadlineReminderMatches')->andReturn($matches);
+        $repository->shouldReceive('kickoff')->andReturnUsing(
+            fn (array $match): CarbonImmutable => CarbonImmutable::parse($match['date'])->utc()
+        );
+        $repository->shouldReceive('deadline')->andReturnUsing(
+            fn (array $match, int $days): CarbonImmutable => CarbonImmutable::parse($match['date'])->utc()->subDays($days)
+        );
+
+        $this->app->instance(WorldCupMatchRepository::class, $repository);
+    }
+
     public function test_grouped_deadline_reminders_include_the_group_stage(): void
     {
         $this->migrateDatabaseOrSkip();
+        $this->useFakeMatches();
 
         $user = User::factory()->create(['username' => 'player_one']);
         $manager = User::factory()->create(['username' => 'manager_one']);
@@ -56,6 +78,7 @@ class DeadlineReminderServiceTest extends TestCase
     public function test_per_match_deadline_reminders_include_the_match_group_stage(): void
     {
         $this->migrateDatabaseOrSkip();
+        $this->useFakeMatches();
 
         $user = User::factory()->create(['username' => 'player_two']);
         $manager = User::factory()->create(['username' => 'manager_two']);

@@ -321,6 +321,17 @@
     opacity: 0.75;
 }
 
+.match-group__meta {
+    margin: -6px 0 0;
+    color: color-mix(in srgb, var(--foreground) 68%, transparent);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.match-group__meta--warning {
+    color: var(--danger);
+}
+
 .team-standings {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));

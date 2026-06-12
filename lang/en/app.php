@@ -192,6 +192,8 @@ return [
         'standings' => 'STANDINGS',
         'real_standings' => 'Real standings',
         'predicted_standings_for' => ':username predictions',
+        'fifa_results_last_updated' => 'FIFA results last updated:',
+        'fifa_results_unavailable' => 'FIFA results are not available yet.',
         'team' => 'Team',
         'played_short' => 'P',
         'wins_short' => 'W',

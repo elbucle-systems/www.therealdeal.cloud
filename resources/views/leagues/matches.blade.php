@@ -38,6 +38,17 @@
         <div class="match-group">
             <h2 class="match-group__title">{{ $activeStage }}</h2>
 
+            @if ($fifaResultsLastUpdated)
+                <p class="match-group__meta">
+                    {{ __('app.league.fifa_results_last_updated') }}
+                    <time datetime="{{ $fifaResultsLastUpdated->toIso8601ZuluString() }}"></time>
+                </p>
+            @elseif ($fifaResultsUnavailable)
+                <p class="match-group__meta match-group__meta--warning">
+                    {{ __('app.league.fifa_results_unavailable') }}
+                </p>
+            @endif
+
             @if (!empty($realStandings))
                 <section class="team-standings">
                     <article class="team-standings__panel">
