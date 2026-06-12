@@ -218,6 +218,8 @@ return [
         'match_number' => 'Match #:number',
         'locked' => 'Locked',
         'predictions' => 'Predictions',
+        'prediction_points' => 'Prediction points',
+        'prediction_points_short' => 'Pts',
         'saved' => 'saved',
     ],
     'flash' => [

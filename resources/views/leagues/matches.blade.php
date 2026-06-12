@@ -116,6 +116,7 @@
                         $locked = $match['locked'];
                         $predA = $match['userPrediction']['predicted_score_a'] ?? null;
                         $predB = $match['userPrediction']['predicted_score_b'] ?? null;
+                        $predPoints = $match['userPrediction']['points'] ?? null;
                         $scoreA = $match['teamAGoals'];
                         $scoreB = $match['teamBGoals'];
                         $played = $scoreA !== null && $scoreB !== null;
@@ -176,9 +177,14 @@
                                         <span class="prediction__field">
                                             <input class="prediction__input prediction__input--b" type="number"
                                                 min="0" max="50" placeholder="-"
-                                                value="{{ $predB ?? '' }}"
-                                                {{ $locked ? 'readonly disabled' : '' }} />
+                                            value="{{ $predB ?? '' }}"
+                                            {{ $locked ? 'readonly disabled' : '' }} />
                                         </span>
+                                    </span>
+                                    <span class="prediction__points"
+                                        title="{{ __('app.league.prediction_points') }}">
+                                        {{ __('app.league.prediction_points_short') }}:
+                                        {{ $predPoints ?? '-' }}
                                     </span>
                                 </span>
 
@@ -193,6 +199,11 @@
                                                 <span class="prediction__separator">-</span>
                                                 <input class="prediction__input" type="number"
                                                     value="{{ $mp['predicted_score_b'] }}" readonly />
+                                            </span>
+                                            <span class="prediction__points"
+                                                title="{{ __('app.league.prediction_points') }}">
+                                                {{ __('app.league.prediction_points_short') }}:
+                                                {{ $mp['points'] ?? '-' }}
                                             </span>
                                         </span>
                                     @endif

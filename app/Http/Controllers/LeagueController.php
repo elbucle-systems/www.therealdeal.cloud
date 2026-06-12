@@ -534,15 +534,11 @@ class LeagueController extends Controller
         $isGroupStage = str_starts_with($activeStage, 'Group ');
         $realStandings = [];
         $predictedStandingsByUser = [];
-        $visiblePredictionsByUser = [];
+        $currentUserPredictionsForStandings = [];
         $standingsCalculator = app(StandingsCalculator::class);
 
         if ($isGroupStage) {
             $realStandings = $standingsCalculator->teamStandings($stageMatches);
-
-            foreach ($approvedUsernames as $username) {
-                $visiblePredictionsByUser[$username] = [];
-            }
         }
 
         $matches = [];
@@ -566,8 +562,22 @@ class LeagueController extends Controller
                 ? [
                     'predicted_score_a' => $matchPredMap[$currentUsername]->predicted_score_a,
                     'predicted_score_b' => $matchPredMap[$currentUsername]->predicted_score_b,
+                    'points' => $standingsCalculator->predictionPoints(
+                        $match,
+                        $matchPredMap[$currentUsername]->predicted_score_a,
+                        $matchPredMap[$currentUsername]->predicted_score_b,
+                        $league->points_per_score,
+                        $league->points_per_result
+                    ),
                 ]
                 : null;
+
+            if ($isGroupStage && $userPred !== null) {
+                $currentUserPredictionsForStandings[$match['id']] = [
+                    'predicted_score_a' => $userPred['predicted_score_a'],
+                    'predicted_score_b' => $userPred['predicted_score_b'],
+                ];
+            }
 
             $memberPredictions = [];
             foreach ($matchPredMap as $uname => $pred) {
@@ -579,14 +589,14 @@ class LeagueController extends Controller
                         'username' => $uname,
                         'predicted_score_a' => $pred->predicted_score_a,
                         'predicted_score_b' => $pred->predicted_score_b,
+                        'points' => $standingsCalculator->predictionPoints(
+                            $match,
+                            $pred->predicted_score_a,
+                            $pred->predicted_score_b,
+                            $league->points_per_score,
+                            $league->points_per_result
+                        ),
                     ];
-
-                    if ($isGroupStage) {
-                        $visiblePredictionsByUser[$uname][$match['id']] = [
-                            'predicted_score_a' => $pred->predicted_score_a,
-                            'predicted_score_b' => $pred->predicted_score_b,
-                        ];
-                    }
                 }
             }
 
@@ -599,19 +609,10 @@ class LeagueController extends Controller
         }
 
         if ($isGroupStage) {
-            foreach ($approvedUsernames as $username) {
-                $isCurrentUser = $username === $currentUsername;
-                $predictionsForUser = $visiblePredictionsByUser[$username] ?? [];
-
-                if (! $isCurrentUser && $predictionsForUser === []) {
-                    continue;
-                }
-
-                $predictedStandingsByUser[] = [
-                    'username' => $username,
-                    'standings' => $standingsCalculator->teamStandings($stageMatches, $predictionsForUser),
-                ];
-            }
+            $predictedStandingsByUser[] = [
+                'username' => $currentUsername,
+                'standings' => $standingsCalculator->teamStandings($stageMatches, $currentUserPredictionsForStandings),
+            ];
         }
 
         return view('leagues.matches', compact(

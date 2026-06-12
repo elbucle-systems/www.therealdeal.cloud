@@ -107,4 +107,52 @@ class StandingsCalculatorTest extends TestCase
         $this->assertSame('South Africa', $standings[0]['team']);
         $this->assertSame(3, $standings[0]['points']);
     }
+
+    public function test_prediction_points_awards_exact_score_points(): void
+    {
+        $match = [
+            'teamAGoals' => 2,
+            'teamBGoals' => 1,
+        ];
+
+        $points = (new StandingsCalculator)->predictionPoints($match, 2, 1, 5, 2);
+
+        $this->assertSame(5, $points);
+    }
+
+    public function test_prediction_points_awards_correct_result_points(): void
+    {
+        $match = [
+            'teamAGoals' => 2,
+            'teamBGoals' => 1,
+        ];
+
+        $points = (new StandingsCalculator)->predictionPoints($match, 3, 0, 5, 2);
+
+        $this->assertSame(2, $points);
+    }
+
+    public function test_prediction_points_returns_zero_for_incorrect_result(): void
+    {
+        $match = [
+            'teamAGoals' => 2,
+            'teamBGoals' => 1,
+        ];
+
+        $points = (new StandingsCalculator)->predictionPoints($match, 0, 1, 5, 2);
+
+        $this->assertSame(0, $points);
+    }
+
+    public function test_prediction_points_returns_null_before_real_score_exists(): void
+    {
+        $match = [
+            'teamAGoals' => null,
+            'teamBGoals' => null,
+        ];
+
+        $points = (new StandingsCalculator)->predictionPoints($match, 2, 1, 5, 2);
+
+        $this->assertNull($points);
+    }
 }

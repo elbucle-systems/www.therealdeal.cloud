@@ -218,6 +218,8 @@ return [
         'match_number' => 'Partido #:number',
         'locked' => 'Cerrado',
         'predictions' => 'Predicciones',
+        'prediction_points' => 'Puntos de la prediccion',
+        'prediction_points_short' => 'Pts',
         'saved' => 'guardado',
     ],
     'flash' => [

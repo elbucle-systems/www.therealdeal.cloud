@@ -74,6 +74,31 @@ final class StandingsCalculator
         );
     }
 
+    public function predictionPoints(
+        array $match,
+        int $predictedScoreA,
+        int $predictedScoreB,
+        int $pointsPerScore,
+        int $pointsPerResult
+    ): ?int {
+        if ($match['teamAGoals'] === null || $match['teamBGoals'] === null) {
+            return null;
+        }
+
+        if ($predictedScoreA === $match['teamAGoals'] && $predictedScoreB === $match['teamBGoals']) {
+            return $pointsPerScore;
+        }
+
+        if (
+            $this->outcomeSign($predictedScoreA, $predictedScoreB)
+            === $this->outcomeSign($match['teamAGoals'], $match['teamBGoals'])
+        ) {
+            return $pointsPerResult;
+        }
+
+        return 0;
+    }
+
     /**
      * @param  array<string, array<string, mixed>>  $standings
      */
@@ -132,5 +157,10 @@ final class StandingsCalculator
         $standings[$teamB]['draws']++;
         $standings[$teamA]['points']++;
         $standings[$teamB]['points']++;
+    }
+
+    private function outcomeSign(int $a, int $b): int
+    {
+        return $a <=> $b;
     }
 }

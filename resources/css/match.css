@@ -175,6 +175,23 @@
     gap: 3px;
 }
 
+.prediction__points {
+    align-items: center;
+    background-color: var(--muted);
+    border: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent);
+    border-radius: 999px;
+    display: inline-flex;
+    flex-shrink: 0;
+    font-family: "Saira Stencil", cursive;
+    font-size: 11px;
+    font-weight: 800;
+    gap: 3px;
+    letter-spacing: 0.04em;
+    min-width: 44px;
+    padding: 2px 7px;
+    justify-content: center;
+}
+
 .prediction__separator {
     font-weight: bold;
 }
@@ -255,6 +272,10 @@
 
     .match__header {
         font-size: 13px;
+    }
+
+    .prediction {
+        gap: 8px;
     }
 }
 
