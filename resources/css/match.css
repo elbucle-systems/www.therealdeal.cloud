@@ -300,6 +300,80 @@
     opacity: 0.75;
 }
 
+.team-standings {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.team-standings__panel {
+    background-color: var(--muted);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow:
+        0 1px 3px 0 rgba(0, 0, 0, 0.1),
+        0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+.team-standings__title {
+    font-family: "Chelsea Market", cursive;
+    font-size: 15px;
+    margin: 0;
+    padding: 12px 14px;
+    border-bottom: 1px solid color-mix(in srgb, var(--foreground) 15%, transparent);
+}
+
+.team-table {
+    overflow-x: auto;
+}
+
+.team-table__header,
+.team-table__row {
+    display: grid;
+    grid-template-columns: 32px minmax(128px, 1fr) repeat(8, 36px);
+    align-items: center;
+    gap: 6px;
+    min-width: 520px;
+    padding: 8px 12px;
+}
+
+.team-table__header {
+    background-color: var(--foreground);
+    color: var(--background);
+    font-family: "Saira Stencil", cursive;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.team-table__row {
+    border-top: 1px solid var(--background);
+    font-size: 12px;
+    text-align: center;
+}
+
+.team-table__row:first-of-type {
+    border-top: none;
+}
+
+.team-table__rank,
+.team-table__points {
+    font-family: "Saira Stencil", cursive;
+    font-weight: 800;
+}
+
+.team-table__team {
+    font-weight: 700;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.team-table__points {
+    color: var(--primary-green);
+}
+
 /* ------------------------------------------------------------------
    Match header additions
    ------------------------------------------------------------------ */
@@ -373,5 +447,9 @@
 
     .matches-page__title {
         font-size: 22px;
+    }
+
+    .team-standings {
+        grid-template-columns: 1fr;
     }
 }

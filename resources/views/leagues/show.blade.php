@@ -104,9 +104,9 @@
                         <span style="text-align:center">{{ __('app.league.result') }}</span>
                     </div>
 
-                    @forelse ($standings as $i => $entry)
+                    @forelse ($standings as $entry)
                         <div class="standings__row">
-                            <span class="standings__rank">{{ $i + 1 }}</span>
+                            <span class="standings__rank">{{ $entry['rank'] }}</span>
                             <span class="standings__username">{{ $entry['username'] }}</span>
                             <span class="standings__points">{{ $entry['total_points'] }}</span>
                             <span class="standings__stat">{{ $entry['exact_score_count'] }}</span>

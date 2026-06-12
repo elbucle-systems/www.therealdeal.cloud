@@ -38,6 +38,78 @@
         <div class="match-group">
             <h2 class="match-group__title">{{ $activeStage }}</h2>
 
+            @if (!empty($realStandings))
+                <section class="team-standings">
+                    <article class="team-standings__panel">
+                        <h3 class="team-standings__title">{{ __('app.league.real_standings') }}</h3>
+                        <div class="team-table">
+                            <div class="team-table__header">
+                                <span>#</span>
+                                <span>{{ __('app.league.team') }}</span>
+                                <span>{{ __('app.league.played_short') }}</span>
+                                <span>{{ __('app.league.wins_short') }}</span>
+                                <span>{{ __('app.league.draws_short') }}</span>
+                                <span>{{ __('app.league.losses_short') }}</span>
+                                <span>{{ __('app.league.goals_for_short') }}</span>
+                                <span>{{ __('app.league.goals_against_short') }}</span>
+                                <span>{{ __('app.league.goal_difference_short') }}</span>
+                                <span>{{ __('app.league.points_short') }}</span>
+                            </div>
+                            @foreach ($realStandings as $row)
+                                <div class="team-table__row">
+                                    <span class="team-table__rank">{{ $row['rank'] }}</span>
+                                    <span class="team-table__team">{{ $row['team'] }}</span>
+                                    <span>{{ $row['played'] }}</span>
+                                    <span>{{ $row['wins'] }}</span>
+                                    <span>{{ $row['draws'] }}</span>
+                                    <span>{{ $row['losses'] }}</span>
+                                    <span>{{ $row['goals_for'] }}</span>
+                                    <span>{{ $row['goals_against'] }}</span>
+                                    <span>{{ $row['goal_difference'] }}</span>
+                                    <span class="team-table__points">{{ $row['points'] }}</span>
+                                </div>
+                            @endforeach
+                        </div>
+                    </article>
+
+                    @foreach ($predictedStandingsByUser as $projection)
+                        <article class="team-standings__panel">
+                            <h3 class="team-standings__title">
+                                {{ __('app.league.predicted_standings_for', ['username' => '@' . $projection['username']]) }}
+                            </h3>
+                            <div class="team-table">
+                                <div class="team-table__header">
+                                    <span>#</span>
+                                    <span>{{ __('app.league.team') }}</span>
+                                    <span>{{ __('app.league.played_short') }}</span>
+                                    <span>{{ __('app.league.wins_short') }}</span>
+                                    <span>{{ __('app.league.draws_short') }}</span>
+                                    <span>{{ __('app.league.losses_short') }}</span>
+                                    <span>{{ __('app.league.goals_for_short') }}</span>
+                                    <span>{{ __('app.league.goals_against_short') }}</span>
+                                    <span>{{ __('app.league.goal_difference_short') }}</span>
+                                    <span>{{ __('app.league.points_short') }}</span>
+                                </div>
+                                @foreach ($projection['standings'] as $row)
+                                    <div class="team-table__row">
+                                        <span class="team-table__rank">{{ $row['rank'] }}</span>
+                                        <span class="team-table__team">{{ $row['team'] }}</span>
+                                        <span>{{ $row['played'] }}</span>
+                                        <span>{{ $row['wins'] }}</span>
+                                        <span>{{ $row['draws'] }}</span>
+                                        <span>{{ $row['losses'] }}</span>
+                                        <span>{{ $row['goals_for'] }}</span>
+                                        <span>{{ $row['goals_against'] }}</span>
+                                        <span>{{ $row['goal_difference'] }}</span>
+                                        <span class="team-table__points">{{ $row['points'] }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </article>
+                    @endforeach
+                </section>
+            @endif
+
             <div class="matches">
                 @foreach ($matches as $match)
                     @php

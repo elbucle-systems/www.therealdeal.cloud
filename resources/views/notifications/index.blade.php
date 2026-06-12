@@ -28,7 +28,8 @@
                                 <time datetime="{{ $deadline['deadline'] }}"></time>
                             </p>
                         </div>
-                        <a class="btn btn--primary btn--sm" href="{{ route('leagues.matches', $deadline['league_id']) }}">
+                        <a class="btn btn--primary btn--sm"
+                            href="{{ route('leagues.matches', [$deadline['league_id'], 'stage' => $deadline['stage']]) }}">
                             {{ __('app.notifications.make_predictions') }}
                         </a>
                     </article>
@@ -41,6 +42,17 @@
                 <h2 class="notifications__section-title">{{ __('app.notifications.recent_notifications') }}</h2>
 
                 @forelse ($notifications as $notification)
+                    @php
+                        $actionUrl = $notification->data['action_url'] ?? null;
+                        if (!$actionUrl && !empty($notification->data['league_id'])) {
+                            $actionUrl = !empty($notification->data['stage'])
+                                ? route('leagues.matches', [
+                                    $notification->data['league_id'],
+                                    'stage' => $notification->data['stage'],
+                                ])
+                                : route('leagues.matches', $notification->data['league_id']);
+                        }
+                    @endphp
                     <article class="notification-card {{ $notification->read_at ? '' : 'notification-card--unread' }}">
                         <div>
                             <h3 class="notification-card__title">
@@ -65,8 +77,8 @@
                         </div>
 
                         <div class="notification-card__actions">
-                            @if (!empty($notification->data['action_url']))
-                                <a class="btn btn--primary btn--sm" href="{{ $notification->data['action_url'] }}">
+                            @if ($actionUrl)
+                                <a class="btn btn--primary btn--sm" href="{{ $actionUrl }}">
                                     {{ $notification->data['action_label'] ?? __('app.notifications.open') }}
                                 </a>
                             @endif
