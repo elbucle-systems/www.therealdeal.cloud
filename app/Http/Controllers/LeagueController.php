@@ -489,7 +489,7 @@ class LeagueController extends Controller
         $allMatches = $matchRepository->all();
         $fifaResultsLastUpdated = $matchRepository->lastFetchedAt();
         $fifaResultsUnavailable = $fifaResultsLastUpdated === null || $allMatches === [];
-        $allStages = array_values(array_unique(array_column($allMatches, 'group')));
+        $allStages = $this->orderedStages(array_values(array_unique(array_column($allMatches, 'group'))));
         $groupStageKeys = array_values(array_filter($allStages, fn ($k) => str_starts_with($k, 'Group ')));
         $knockoutKeys = array_values(array_filter($allStages, fn ($k) => ! str_starts_with($k, 'Group ')));
 
@@ -631,5 +631,40 @@ class LeagueController extends Controller
             'fifaResultsLastUpdated',
             'fifaResultsUnavailable'
         ));
+    }
+
+    /**
+     * @param  array<int, string>  $stages
+     * @return array<int, string>
+     */
+    private function orderedStages(array $stages): array
+    {
+        $order = array_flip([
+            'Group A',
+            'Group B',
+            'Group C',
+            'Group D',
+            'Group E',
+            'Group F',
+            'Group G',
+            'Group H',
+            'Group I',
+            'Group J',
+            'Group K',
+            'Group L',
+            'Round of 32',
+            'Round of 16',
+            'Quarterfinals',
+            'Semifinals',
+            'Third Place',
+            'Final',
+        ]);
+
+        usort($stages, function (string $a, string $b) use ($order): int {
+            return ($order[$a] ?? PHP_INT_MAX) <=> ($order[$b] ?? PHP_INT_MAX)
+                ?: strcasecmp($a, $b);
+        });
+
+        return $stages;
     }
 }
