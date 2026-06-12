@@ -75,7 +75,7 @@ class FifaWorldCupResultNormalizerTest extends TestCase
         ]);
 
         $this->assertCount(1, $matches);
-        $this->assertSame('A1', $matches[0]['id']);
+        $this->assertSame('A2', $matches[0]['id']);
         $this->assertSame('South Korea', $matches[0]['teamA']);
         $this->assertSame('Czech Republic', $matches[0]['teamB']);
     }

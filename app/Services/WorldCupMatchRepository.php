@@ -8,7 +8,7 @@ use Throwable;
 
 class WorldCupMatchRepository
 {
-    private const CACHE_KEY = 'fifa_world_cup_2026_matches';
+    private const CACHE_KEY = 'fifa_world_cup_2026_matches_v2';
 
     public function __construct(
         private readonly FifaWorldCupResultsClient $client,
