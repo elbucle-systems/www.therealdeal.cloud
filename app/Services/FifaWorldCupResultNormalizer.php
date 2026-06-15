@@ -7,111 +7,111 @@ use Illuminate\Support\Str;
 
 class FifaWorldCupResultNormalizer
 {
-    private const LEGACY_MATCH_IDS = [
-        1 => 'A1',
-        2 => 'A2',
-        3 => 'B1',
-        4 => 'D1',
-        5 => 'C2',
-        6 => 'D2',
-        7 => 'C1',
-        8 => 'B2',
-        9 => 'E2',
-        10 => 'E1',
-        11 => 'F1',
-        12 => 'F2',
-        13 => 'H2',
-        14 => 'H1',
-        15 => 'G2',
-        16 => 'G1',
-        17 => 'I1',
-        18 => 'I2',
-        19 => 'J1',
-        20 => 'J2',
-        21 => 'L2',
-        22 => 'L1',
-        23 => 'K1',
-        24 => 'K2',
-        25 => 'A3',
-        26 => 'B3',
-        27 => 'A4',
-        28 => 'B4',
-        29 => 'C4',
-        30 => 'C3',
-        31 => 'D4',
-        32 => 'D3',
-        33 => 'E3',
-        34 => 'E4',
-        35 => 'F3',
-        36 => 'F4',
-        37 => 'G4',
-        38 => 'G3',
-        39 => 'H4',
-        40 => 'H3',
-        41 => 'I3',
-        42 => 'I4',
-        43 => 'J3',
-        44 => 'J4',
-        45 => 'L4',
-        46 => 'L3',
-        47 => 'K3',
-        48 => 'K4',
-        49 => 'C5',
-        50 => 'C6',
-        51 => 'B5',
-        52 => 'B6',
-        53 => 'A5',
-        54 => 'A6',
-        55 => 'E5',
-        56 => 'E6',
-        57 => 'F5',
-        58 => 'F6',
-        59 => 'D5',
-        60 => 'D6',
-        61 => 'I5',
-        62 => 'I6',
-        63 => 'G5',
-        64 => 'G6',
-        65 => 'H5',
-        66 => 'H6',
-        67 => 'L5',
-        68 => 'L6',
-        69 => 'J5',
-        70 => 'J6',
-        71 => 'K5',
-        72 => 'K6',
-        73 => 'R32_1',
-        74 => 'R32_2',
-        75 => 'R32_3',
-        76 => 'R32_4',
-        77 => 'R32_5',
-        78 => 'R32_6',
-        79 => 'R32_7',
-        80 => 'R32_8',
-        81 => 'R32_9',
-        82 => 'R32_10',
-        83 => 'R32_11',
-        84 => 'R32_12',
-        85 => 'R32_13',
-        86 => 'R32_14',
-        87 => 'R32_15',
-        88 => 'R32_16',
-        89 => 'R16_1',
-        90 => 'R16_2',
-        91 => 'R16_3',
-        92 => 'R16_4',
-        93 => 'R16_5',
-        94 => 'R16_6',
-        95 => 'R16_7',
-        96 => 'R16_8',
-        97 => 'QF1',
-        98 => 'QF2',
-        99 => 'QF3',
-        100 => 'QF4',
-        101 => 'SF1',
-        102 => 'SF2',
-        103 => 'TP1',
-        104 => 'FINAL',
+    private const STABLE_FIXTURES = [
+        1 => ['id' => 'A1', 'group' => 'Group A', 'teamA' => 'Mexico', 'teamB' => 'South Africa'],
+        2 => ['id' => 'A2', 'group' => 'Group A', 'teamA' => 'South Korea', 'teamB' => 'Czech Republic'],
+        3 => ['id' => 'B1', 'group' => 'Group B', 'teamA' => 'Canada', 'teamB' => 'Bosnia and Herzegovina'],
+        4 => ['id' => 'D1', 'group' => 'Group D', 'teamA' => 'United States', 'teamB' => 'Paraguay'],
+        5 => ['id' => 'C2', 'group' => 'Group C', 'teamA' => 'Haiti', 'teamB' => 'Scotland'],
+        6 => ['id' => 'D2', 'group' => 'Group D', 'teamA' => 'Australia', 'teamB' => 'Turkey'],
+        7 => ['id' => 'C1', 'group' => 'Group C', 'teamA' => 'Brazil', 'teamB' => 'Morocco'],
+        8 => ['id' => 'B2', 'group' => 'Group B', 'teamA' => 'Qatar', 'teamB' => 'Switzerland'],
+        9 => ['id' => 'E2', 'group' => 'Group E', 'teamA' => 'Ivory Coast', 'teamB' => 'Ecuador'],
+        10 => ['id' => 'E1', 'group' => 'Group E', 'teamA' => 'Germany', 'teamB' => 'Curacao'],
+        11 => ['id' => 'F1', 'group' => 'Group F', 'teamA' => 'Netherlands', 'teamB' => 'Japan'],
+        12 => ['id' => 'F2', 'group' => 'Group F', 'teamA' => 'Tunisia', 'teamB' => 'Sweden'],
+        13 => ['id' => 'H2', 'group' => 'Group H', 'teamA' => 'Saudi Arabia', 'teamB' => 'Uruguay'],
+        14 => ['id' => 'H1', 'group' => 'Group H', 'teamA' => 'Spain', 'teamB' => 'Cape Verde'],
+        15 => ['id' => 'G2', 'group' => 'Group G', 'teamA' => 'Iran', 'teamB' => 'New Zealand'],
+        16 => ['id' => 'G1', 'group' => 'Group G', 'teamA' => 'Belgium', 'teamB' => 'Egypt'],
+        17 => ['id' => 'I1', 'group' => 'Group I', 'teamA' => 'France', 'teamB' => 'Senegal'],
+        18 => ['id' => 'I2', 'group' => 'Group I', 'teamA' => 'Norway', 'teamB' => 'Iraq'],
+        19 => ['id' => 'J1', 'group' => 'Group J', 'teamA' => 'Argentina', 'teamB' => 'Algeria'],
+        20 => ['id' => 'J2', 'group' => 'Group J', 'teamA' => 'Austria', 'teamB' => 'Jordan'],
+        21 => ['id' => 'L2', 'group' => 'Group L', 'teamA' => 'Ghana', 'teamB' => 'Panama'],
+        22 => ['id' => 'L1', 'group' => 'Group L', 'teamA' => 'England', 'teamB' => 'Croatia'],
+        23 => ['id' => 'K1', 'group' => 'Group K', 'teamA' => 'Portugal', 'teamB' => 'DR Congo'],
+        24 => ['id' => 'K2', 'group' => 'Group K', 'teamA' => 'Uzbekistan', 'teamB' => 'Colombia'],
+        25 => ['id' => 'A3', 'group' => 'Group A', 'teamA' => 'South Africa', 'teamB' => 'Czech Republic'],
+        26 => ['id' => 'B3', 'group' => 'Group B', 'teamA' => 'Switzerland', 'teamB' => 'Bosnia and Herzegovina'],
+        27 => ['id' => 'A4', 'group' => 'Group A', 'teamA' => 'Mexico', 'teamB' => 'South Korea'],
+        28 => ['id' => 'B4', 'group' => 'Group B', 'teamA' => 'Canada', 'teamB' => 'Qatar'],
+        29 => ['id' => 'C4', 'group' => 'Group C', 'teamA' => 'Brazil', 'teamB' => 'Haiti'],
+        30 => ['id' => 'C3', 'group' => 'Group C', 'teamA' => 'Scotland', 'teamB' => 'Morocco'],
+        31 => ['id' => 'D4', 'group' => 'Group D', 'teamA' => 'Paraguay', 'teamB' => 'Turkey'],
+        32 => ['id' => 'D3', 'group' => 'Group D', 'teamA' => 'United States', 'teamB' => 'Australia'],
+        33 => ['id' => 'E3', 'group' => 'Group E', 'teamA' => 'Germany', 'teamB' => 'Ivory Coast'],
+        34 => ['id' => 'E4', 'group' => 'Group E', 'teamA' => 'Ecuador', 'teamB' => 'Curacao'],
+        35 => ['id' => 'F3', 'group' => 'Group F', 'teamA' => 'Netherlands', 'teamB' => 'Sweden'],
+        36 => ['id' => 'F4', 'group' => 'Group F', 'teamA' => 'Tunisia', 'teamB' => 'Japan'],
+        37 => ['id' => 'G4', 'group' => 'Group G', 'teamA' => 'New Zealand', 'teamB' => 'Egypt'],
+        38 => ['id' => 'G3', 'group' => 'Group G', 'teamA' => 'Belgium', 'teamB' => 'Iran'],
+        39 => ['id' => 'H4', 'group' => 'Group H', 'teamA' => 'Spain', 'teamB' => 'Saudi Arabia'],
+        40 => ['id' => 'H3', 'group' => 'Group H', 'teamA' => 'Uruguay', 'teamB' => 'Cape Verde'],
+        41 => ['id' => 'I3', 'group' => 'Group I', 'teamA' => 'France', 'teamB' => 'Iraq'],
+        42 => ['id' => 'I4', 'group' => 'Group I', 'teamA' => 'Norway', 'teamB' => 'Senegal'],
+        43 => ['id' => 'J3', 'group' => 'Group J', 'teamA' => 'Argentina', 'teamB' => 'Austria'],
+        44 => ['id' => 'J4', 'group' => 'Group J', 'teamA' => 'Jordan', 'teamB' => 'Algeria'],
+        45 => ['id' => 'L4', 'group' => 'Group L', 'teamA' => 'England', 'teamB' => 'Ghana'],
+        46 => ['id' => 'L3', 'group' => 'Group L', 'teamA' => 'Panama', 'teamB' => 'Croatia'],
+        47 => ['id' => 'K3', 'group' => 'Group K', 'teamA' => 'Portugal', 'teamB' => 'Uzbekistan'],
+        48 => ['id' => 'K4', 'group' => 'Group K', 'teamA' => 'Colombia', 'teamB' => 'DR Congo'],
+        49 => ['id' => 'C5', 'group' => 'Group C', 'teamA' => 'Scotland', 'teamB' => 'Brazil'],
+        50 => ['id' => 'C6', 'group' => 'Group C', 'teamA' => 'Morocco', 'teamB' => 'Haiti'],
+        51 => ['id' => 'B5', 'group' => 'Group B', 'teamA' => 'Canada', 'teamB' => 'Switzerland'],
+        52 => ['id' => 'B6', 'group' => 'Group B', 'teamA' => 'Qatar', 'teamB' => 'Bosnia and Herzegovina'],
+        53 => ['id' => 'A5', 'group' => 'Group A', 'teamA' => 'Mexico', 'teamB' => 'Czech Republic'],
+        54 => ['id' => 'A6', 'group' => 'Group A', 'teamA' => 'South Korea', 'teamB' => 'South Africa'],
+        55 => ['id' => 'E5', 'group' => 'Group E', 'teamA' => 'Curacao', 'teamB' => 'Ivory Coast'],
+        56 => ['id' => 'E6', 'group' => 'Group E', 'teamA' => 'Ecuador', 'teamB' => 'Germany'],
+        57 => ['id' => 'F5', 'group' => 'Group F', 'teamA' => 'Japan', 'teamB' => 'Sweden'],
+        58 => ['id' => 'F6', 'group' => 'Group F', 'teamA' => 'Tunisia', 'teamB' => 'Netherlands'],
+        59 => ['id' => 'D5', 'group' => 'Group D', 'teamA' => 'United States', 'teamB' => 'Turkey'],
+        60 => ['id' => 'D6', 'group' => 'Group D', 'teamA' => 'Paraguay', 'teamB' => 'Australia'],
+        61 => ['id' => 'I5', 'group' => 'Group I', 'teamA' => 'Norway', 'teamB' => 'France'],
+        62 => ['id' => 'I6', 'group' => 'Group I', 'teamA' => 'Senegal', 'teamB' => 'Iraq'],
+        63 => ['id' => 'G5', 'group' => 'Group G', 'teamA' => 'Egypt', 'teamB' => 'Iran'],
+        64 => ['id' => 'G6', 'group' => 'Group G', 'teamA' => 'New Zealand', 'teamB' => 'Belgium'],
+        65 => ['id' => 'H5', 'group' => 'Group H', 'teamA' => 'Cape Verde', 'teamB' => 'Saudi Arabia'],
+        66 => ['id' => 'H6', 'group' => 'Group H', 'teamA' => 'Uruguay', 'teamB' => 'Spain'],
+        67 => ['id' => 'L5', 'group' => 'Group L', 'teamA' => 'Panama', 'teamB' => 'England'],
+        68 => ['id' => 'L6', 'group' => 'Group L', 'teamA' => 'Croatia', 'teamB' => 'Ghana'],
+        69 => ['id' => 'J5', 'group' => 'Group J', 'teamA' => 'Algeria', 'teamB' => 'Austria'],
+        70 => ['id' => 'J6', 'group' => 'Group J', 'teamA' => 'Jordan', 'teamB' => 'Argentina'],
+        71 => ['id' => 'K5', 'group' => 'Group K', 'teamA' => 'Colombia', 'teamB' => 'Portugal'],
+        72 => ['id' => 'K6', 'group' => 'Group K', 'teamA' => 'Uzbekistan', 'teamB' => 'DR Congo'],
+        73 => ['id' => 'R32_1', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        74 => ['id' => 'R32_2', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        75 => ['id' => 'R32_3', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        76 => ['id' => 'R32_4', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        77 => ['id' => 'R32_5', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        78 => ['id' => 'R32_6', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        79 => ['id' => 'R32_7', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        80 => ['id' => 'R32_8', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        81 => ['id' => 'R32_9', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        82 => ['id' => 'R32_10', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        83 => ['id' => 'R32_11', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        84 => ['id' => 'R32_12', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        85 => ['id' => 'R32_13', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        86 => ['id' => 'R32_14', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        87 => ['id' => 'R32_15', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        88 => ['id' => 'R32_16', 'group' => 'Round of 32', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        89 => ['id' => 'R16_1', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        90 => ['id' => 'R16_2', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        91 => ['id' => 'R16_3', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        92 => ['id' => 'R16_4', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        93 => ['id' => 'R16_5', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        94 => ['id' => 'R16_6', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        95 => ['id' => 'R16_7', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        96 => ['id' => 'R16_8', 'group' => 'Round of 16', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        97 => ['id' => 'QF1', 'group' => 'Quarterfinals', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        98 => ['id' => 'QF2', 'group' => 'Quarterfinals', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        99 => ['id' => 'QF3', 'group' => 'Quarterfinals', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        100 => ['id' => 'QF4', 'group' => 'Quarterfinals', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        101 => ['id' => 'SF1', 'group' => 'Semifinals', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        102 => ['id' => 'SF2', 'group' => 'Semifinals', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        103 => ['id' => 'TP1', 'group' => 'Third Place', 'teamA' => 'TBD', 'teamB' => 'TBD'],
+        104 => ['id' => 'FINAL', 'group' => 'Final', 'teamA' => 'TBD', 'teamB' => 'TBD'],
     ];
 
     private const LEGACY_GROUP_ORDER = [
@@ -162,51 +162,31 @@ class FifaWorldCupResultNormalizer
     private function normalizeMatch(array $payload): ?array
     {
         $matchNumber = isset($payload['MatchNumber']) ? (int) $payload['MatchNumber'] : null;
-        $stage = $this->stage($payload, $matchNumber);
-        $id = $this->matchId($matchNumber);
+        $fixture = $matchNumber === null ? null : (self::STABLE_FIXTURES[$matchNumber] ?? null);
 
-        if ($matchNumber === null || $stage === null || $id === null || ! isset($payload['Date'])) {
+        if ($matchNumber === null || $fixture === null || ! isset($payload['Date'])) {
             return null;
         }
 
-        $homeTeam = $this->teamName($payload, 'Home', 'PlaceHolderA');
-        $awayTeam = $this->teamName($payload, 'Away', 'PlaceHolderB');
+        $fifaHomeTeam = $this->teamName($payload, 'Home', 'PlaceHolderA');
+        $fifaAwayTeam = $this->teamName($payload, 'Away', 'PlaceHolderB');
+        $teamA = $fixture['teamA'] === 'TBD' ? $fifaHomeTeam : $fixture['teamA'];
+        $teamB = $fixture['teamB'] === 'TBD' ? $fifaAwayTeam : $fixture['teamB'];
+        [$teamAGoals, $teamBGoals, $orientation] = $this->orientedScores($payload, $teamA, $teamB, $fifaHomeTeam, $fifaAwayTeam);
 
         return [
-            'id' => $id,
-            'group' => $stage,
+            'id' => $fixture['id'],
+            'group' => $fixture['group'],
             'date' => CarbonImmutable::parse($payload['Date'])->utc()->toIso8601ZuluString(),
             'matchNumber' => $matchNumber,
-            'teamA' => $homeTeam,
-            'teamAGoals' => $this->score($payload['HomeTeamScore'] ?? $payload['Home']['Score'] ?? null),
-            'teamBGoals' => $this->score($payload['AwayTeamScore'] ?? $payload['Away']['Score'] ?? null),
-            'teamB' => $awayTeam,
+            'teamA' => $teamA,
+            'teamAGoals' => $teamAGoals,
+            'teamBGoals' => $teamBGoals,
+            'teamB' => $teamB,
             'fifa_match_id' => isset($payload['IdMatch']) ? (string) $payload['IdMatch'] : null,
             'fifa_status' => isset($payload['MatchStatus']) ? (string) $payload['MatchStatus'] : null,
+            'fifa_orientation' => $orientation,
         ];
-    }
-
-    private function stage(array $payload, ?int $matchNumber): ?string
-    {
-        $group = $this->localizedDescription($payload['GroupName'] ?? []);
-        if ($group !== null) {
-            return $group;
-        }
-
-        return match (true) {
-            $matchNumber >= 73 && $matchNumber <= 88 => 'Round of 32',
-            $matchNumber >= 89 && $matchNumber <= 96 => 'Round of 16',
-            $matchNumber >= 97 && $matchNumber <= 100 => 'Quarterfinals',
-            $matchNumber >= 101 && $matchNumber <= 102 => 'Semifinals',
-            $matchNumber === 103 => 'Third Place',
-            $matchNumber === 104 => 'Final',
-            default => $this->localizedDescription($payload['StageName'] ?? []),
-        };
-    }
-
-    private function matchId(?int $matchNumber): ?string
-    {
-        return $matchNumber === null ? null : (self::LEGACY_MATCH_IDS[$matchNumber] ?? null);
     }
 
     private function legacyOrder(string $id): int
@@ -247,13 +227,59 @@ class FifaWorldCupResultNormalizer
         return is_numeric($score) ? (int) $score : null;
     }
 
+    /**
+     * @return array{0: int|null, 1: int|null, 2: string}
+     */
+    private function orientedScores(array $payload, string $teamA, string $teamB, string $fifaHomeTeam, string $fifaAwayTeam): array
+    {
+        $homeScore = $this->score($payload['HomeTeamScore'] ?? $payload['Home']['Score'] ?? null);
+        $awayScore = $this->score($payload['AwayTeamScore'] ?? $payload['Away']['Score'] ?? null);
+
+        if ($homeScore === null || $awayScore === null) {
+            return [null, null, 'pending'];
+        }
+
+        if ($teamA === 'TBD' || $teamB === 'TBD') {
+            return [$homeScore, $awayScore, 'dynamic'];
+        }
+
+        $teamAKey = $this->teamKey($teamA);
+        $teamBKey = $this->teamKey($teamB);
+        $homeKey = $this->teamKey($fifaHomeTeam);
+        $awayKey = $this->teamKey($fifaAwayTeam);
+
+        if ($homeKey === $teamAKey && $awayKey === $teamBKey) {
+            return [$homeScore, $awayScore, 'same'];
+        }
+
+        if ($homeKey === $teamBKey && $awayKey === $teamAKey) {
+            return [$awayScore, $homeScore, 'swapped'];
+        }
+
+        return [null, null, 'mismatch'];
+    }
+
     private function displayTeamName(string $team): string
     {
-        return match (Str::of($team)->lower()->toString()) {
-            'korea republic' => 'South Korea',
+        return match (Str::of($team)->ascii()->lower()->toString()) {
+            'congo dr' => 'DR Congo',
             'czechia' => 'Czech Republic',
+            'cote d\'ivoire' => 'Ivory Coast',
+            'curacao' => 'Curacao',
+            'korea republic' => 'South Korea',
+            'turkiye' => 'Turkey',
             'usa', 'united states of america' => 'United States',
             default => $team,
         };
+    }
+
+    private function teamKey(string $team): string
+    {
+        return Str::of($this->displayTeamName($team))
+            ->ascii()
+            ->lower()
+            ->replace(['and'], [''])
+            ->replaceMatches('/[^a-z0-9]+/', '')
+            ->toString();
     }
 }

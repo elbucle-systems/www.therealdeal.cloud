@@ -40,7 +40,7 @@ class DeadlineReminderServiceTest extends TestCase
         $this->app->instance(WorldCupMatchRepository::class, $repository);
     }
 
-    public function test_grouped_deadline_reminders_include_the_group_stage(): void
+    public function test_grouped_deadline_settings_still_remind_by_match_kickoff(): void
     {
         $this->migrateDatabaseOrSkip();
         $this->useFakeMatches();
@@ -68,11 +68,12 @@ class DeadlineReminderServiceTest extends TestCase
             CarbonImmutable::parse('2026-06-11T18:00:00Z')
         );
 
-        $deadline = collect($deadlines)->firstWhere('stage', 'Group B');
+        $deadline = collect($deadlines)->firstWhere('match_ids', ['A1']);
 
         $this->assertNotNull($deadline);
-        $this->assertSame('Group B', $deadline['label']);
-        $this->assertSame('Group B', $deadline['stage']);
+        $this->assertSame('Mexico vs South Africa', $deadline['label']);
+        $this->assertSame('Group A', $deadline['stage']);
+        $this->assertSame(['A1'], $deadline['match_ids']);
     }
 
     public function test_per_match_deadline_reminders_include_the_match_group_stage(): void

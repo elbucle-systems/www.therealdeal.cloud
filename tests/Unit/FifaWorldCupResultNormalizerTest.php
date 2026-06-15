@@ -146,4 +146,70 @@ class FifaWorldCupResultNormalizerTest extends TestCase
 
         $this->assertSame(['C1', 'C2'], array_column($matches, 'id'));
     }
+
+    public function test_it_keeps_stable_team_orientation_when_fifa_swaps_home_and_away(): void
+    {
+        $matches = (new FifaWorldCupResultNormalizer)->normalize([
+            [
+                'IdMatch' => '400021456',
+                'MatchNumber' => 7,
+                'Date' => '2026-06-13T22:00:00Z',
+                'GroupName' => [
+                    ['Locale' => 'en-GB', 'Description' => 'Group C'],
+                ],
+                'Home' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Morocco'],
+                    ],
+                ],
+                'Away' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Brazil'],
+                    ],
+                ],
+                'HomeTeamScore' => 0,
+                'AwayTeamScore' => 2,
+            ],
+        ]);
+
+        $this->assertSame('C1', $matches[0]['id']);
+        $this->assertSame('Brazil', $matches[0]['teamA']);
+        $this->assertSame('Morocco', $matches[0]['teamB']);
+        $this->assertSame(2, $matches[0]['teamAGoals']);
+        $this->assertSame(0, $matches[0]['teamBGoals']);
+        $this->assertSame('swapped', $matches[0]['fifa_orientation']);
+    }
+
+    public function test_it_refuses_scores_when_fifa_teams_do_not_match_stable_fixture(): void
+    {
+        $matches = (new FifaWorldCupResultNormalizer)->normalize([
+            [
+                'IdMatch' => '400021456',
+                'MatchNumber' => 7,
+                'Date' => '2026-06-13T22:00:00Z',
+                'GroupName' => [
+                    ['Locale' => 'en-GB', 'Description' => 'Group C'],
+                ],
+                'Home' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Brazil'],
+                    ],
+                ],
+                'Away' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Scotland'],
+                    ],
+                ],
+                'HomeTeamScore' => 2,
+                'AwayTeamScore' => 1,
+            ],
+        ]);
+
+        $this->assertSame('C1', $matches[0]['id']);
+        $this->assertSame('Brazil', $matches[0]['teamA']);
+        $this->assertSame('Morocco', $matches[0]['teamB']);
+        $this->assertNull($matches[0]['teamAGoals']);
+        $this->assertNull($matches[0]['teamBGoals']);
+        $this->assertSame('mismatch', $matches[0]['fifa_orientation']);
+    }
 }
