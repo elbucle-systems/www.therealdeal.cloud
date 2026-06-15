@@ -71,10 +71,7 @@
             <div class="league-settings__item">
                 <span class="league-settings__label">{{ __('app.league.deadline') }}</span>
                 <span class="league-settings__value">
-                    {{ trans_choice('app.league.deadline_summary', $league->deadline_days, [
-                        'count' => $league->deadline_days,
-                        'mode' => $league->grouped_deadline ? __('app.league.grouped') : __('app.league.per_match'),
-                    ]) }}
+                    {{ __('app.league.deadline_kickoff') }}
                 </span>
             </div>
             <div class="league-settings__item">

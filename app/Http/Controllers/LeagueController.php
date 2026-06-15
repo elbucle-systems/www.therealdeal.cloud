@@ -167,12 +167,11 @@ class LeagueController extends Controller
             'points_per_result' => ['required', 'integer', 'min:0'],
             'predictions_visible_before_game' => ['sometimes', 'boolean'],
             'members_size_limit' => ['nullable', 'integer', 'min:2'],
-            'grouped_deadline' => ['sometimes', 'boolean'],
-            'deadline_days' => ['required', 'integer', 'min:0'],
         ]);
 
         $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
-        $data['grouped_deadline'] = $request->boolean('grouped_deadline');
+        $data['grouped_deadline'] = false;
+        $data['deadline_days'] = 0;
         $data['manager_id'] = Auth::id();
         $data['unique_code'] = $this->generateUniqueCode();
 
@@ -244,12 +243,11 @@ class LeagueController extends Controller
             'points_per_result' => ['required', 'integer', 'min:0'],
             'predictions_visible_before_game' => ['sometimes', 'boolean'],
             'members_size_limit' => ['nullable', 'integer', 'min:2'],
-            'grouped_deadline' => ['sometimes', 'boolean'],
-            'deadline_days' => ['required', 'integer', 'min:0'],
         ]);
 
         $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
-        $data['grouped_deadline'] = $request->boolean('grouped_deadline');
+        $data['grouped_deadline'] = false;
+        $data['deadline_days'] = 0;
 
         $trackedOriginal = $league->only($rules->trackedFields());
 
@@ -520,20 +518,6 @@ class LeagueController extends Controller
 
         $now = now();
         $predictionsVisibleBefore = $league->predictions_visible_before_game;
-        $groupedDeadline = $league->grouped_deadline;
-        $deadlineDays = $league->deadline_days;
-
-        // Precompute first kickoff per group for grouped_deadline mode
-        $groupFirstDate = [];
-        if ($groupedDeadline) {
-            foreach ($allMatches as $m) {
-                $kickoff = $matchRepository->kickoff($m);
-                if (! isset($groupFirstDate[$m['group']]) || $kickoff->lt($groupFirstDate[$m['group']])) {
-                    $groupFirstDate[$m['group']] = $kickoff;
-                }
-            }
-        }
-
         $stageMatches = array_values(array_filter($allMatches, fn ($m) => $m['group'] === $activeStage));
         $isGroupStage = str_starts_with($activeStage, 'Group ');
         $realStandings = [];
@@ -554,10 +538,7 @@ class LeagueController extends Controller
             $kickoff = $matchRepository->kickoff($match);
             $matchStarted = $kickoff->lte($now);
 
-            $reference = $groupedDeadline
-                ? ($groupFirstDate[$match['group']] ?? $kickoff)
-                : $kickoff;
-            $deadline = $reference->subDays($deadlineDays);
+            $deadline = $kickoff;
             $locked = $now->gte($deadline);
 
             $matchPredMap = $predMap[$match['id']] ?? [];

@@ -37,22 +37,7 @@ class MatchApiController extends Controller
         $now = now();
         $kickoff = $matchRepository->kickoff($match);
 
-        if ($league->grouped_deadline) {
-            $groupFirstDate = null;
-            foreach ($matchRepository->all() as $m) {
-                if ($m['group'] === $match['group']) {
-                    $date = $matchRepository->kickoff($m);
-                    if ($groupFirstDate === null || $date->lt($groupFirstDate)) {
-                        $groupFirstDate = $date;
-                    }
-                }
-            }
-            $reference = $groupFirstDate ?? $kickoff;
-        } else {
-            $reference = $kickoff;
-        }
-
-        $deadline = $reference->subDays($league->deadline_days);
+        $deadline = $kickoff;
 
         if ($now->gte($deadline)) {
             return response()->json(['error' => __('app.api.prediction_locked')], 403);

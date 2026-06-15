@@ -56,25 +56,7 @@
                     @enderror
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-                    <div class="form__field">
-                        <label class="form__label" for="deadline_days">{{ __('app.league.deadline_days_match') }}</label>
-                        <input class="form__input" id="deadline_days" name="deadline_days" type="number" min="0"
-                            value="{{ old('deadline_days', 1) }}">
-                        @error('deadline_days')
-                            <p class="form__error">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div class="form__field">
-                        <label class="form__label">{{ __('app.league.deadline_mode') }}</label>
-                        <label
-                            style="display:flex;align-items:center;gap:8px;font-family:'Saira Stencil',cursive;font-size:14px;cursor:pointer">
-                            <input type="checkbox" name="grouped_deadline" value="1"
-                                {{ old('grouped_deadline') ? 'checked' : '' }}>
-                            {{ __('app.league.group_deadline') }}
-                        </label>
-                    </div>
-                </div>
+                <input type="hidden" name="deadline_days" value="0">
 
                 <div class="form__field">
                     <label

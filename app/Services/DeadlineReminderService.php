@@ -44,58 +44,10 @@ class DeadlineReminderService
         $predictedLookup = array_fill_keys($predictedMatchIds, true);
         $matches = collect($this->matches->deadlineReminderMatches());
 
-        if ($league->grouped_deadline) {
-            return $matches
-                ->groupBy('group')
-                ->map(fn (Collection $groupMatches, string $group) => $this->groupDeadline($league, $group, $groupMatches, $predictedLookup, $now, $windowEnd))
-                ->filter()
-                ->values();
-        }
-
         return $matches
             ->map(fn (array $match) => $this->matchDeadline($league, $match, $predictedLookup, $now, $windowEnd))
             ->filter()
             ->values();
-    }
-
-    /**
-     * @param  Collection<int, array<string, mixed>>  $matches
-     * @param  array<string, bool>  $predictedLookup
-     * @return array<string, mixed>|null
-     */
-    private function groupDeadline(League $league, string $group, Collection $matches, array $predictedLookup, CarbonImmutable $now, ?CarbonImmutable $windowEnd): ?array
-    {
-        $deadline = $matches
-            ->map(fn (array $match) => $this->matches->kickoff($match))
-            ->sortBy(fn (CarbonImmutable $kickoff) => $kickoff->timestamp)
-            ->first()
-            ->subDays($league->deadline_days);
-
-        if ($this->outsideWindow($deadline, $now, $windowEnd)) {
-            return null;
-        }
-
-        $missingMatches = $matches
-            ->reject(fn (array $match) => isset($predictedLookup[$match['id']]))
-            ->values();
-
-        if ($missingMatches->isEmpty()) {
-            return null;
-        }
-
-        return [
-            'key' => "league:{$league->id}:group:{$group}:{$deadline->toIso8601ZuluString()}",
-            'type' => 'group',
-            'league_id' => $league->id,
-            'league_name' => $league->name,
-            'label' => $group,
-            'stage' => $group,
-            'deadline' => $deadline->toIso8601ZuluString(),
-            'deadline_utc' => $deadline,
-            'missing_count' => $missingMatches->count(),
-            'match_ids' => $missingMatches->pluck('id')->all(),
-            'match_numbers' => $missingMatches->pluck('matchNumber')->all(),
-        ];
     }
 
     /**
@@ -108,7 +60,7 @@ class DeadlineReminderService
             return null;
         }
 
-        $deadline = $this->matches->deadline($match, $league->deadline_days);
+        $deadline = $this->matches->kickoff($match);
 
         if ($this->outsideWindow($deadline, $now, $windowEnd)) {
             return null;
