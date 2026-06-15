@@ -54,7 +54,7 @@ class MatchApiController extends Controller
 
         $deadline = $reference->subDays($league->deadline_days);
 
-        if ($now->gte($deadline)) {
+        if ($now->gte($deadline) && ! $this->temporarilyBypassesPredictionDeadline($userId, $match)) {
             return response()->json(['error' => __('app.api.prediction_locked')], 403);
         }
 
@@ -78,5 +78,12 @@ class MatchApiController extends Controller
         );
 
         return response()->json(['message' => __('app.api.prediction_saved')]);
+    }
+
+    private function temporarilyBypassesPredictionDeadline(int $userId, array $match): bool
+    {
+        // TEMPORARY OVERRIDE: allow user 4 to enter missed Groups G/H predictions.
+        // Remove this when the one-off correction window is closed.
+        return $userId === 4 && in_array($match['group'], ['Group G', 'Group H'], true);
     }
 }
