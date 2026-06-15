@@ -517,7 +517,6 @@ class LeagueController extends Controller
         }
 
         $now = now();
-        $predictionsVisibleBefore = $league->predictions_visible_before_game;
         $stageMatches = array_values(array_filter($allMatches, fn ($m) => $m['group'] === $activeStage));
         $isGroupStage = str_starts_with($activeStage, 'Group ');
         $realStandings = [];
@@ -571,8 +570,6 @@ class LeagueController extends Controller
                     (
                         $uname === $currentUsername
                         || $matchStarted
-                        || $predictionsVisibleBefore
-                        || $kickoff->subHour()->lte($now)
                     )
                 ) {
                     $memberPredictions[] = [

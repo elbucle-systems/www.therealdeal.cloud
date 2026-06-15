@@ -114,19 +114,45 @@ class FifaWorldCupResultNormalizer
         104 => 'FINAL',
     ];
 
+    private const LEGACY_GROUP_ORDER = [
+        'A1', 'A2', 'A3', 'A4', 'A5', 'A6',
+        'B1', 'B2', 'B3', 'B4', 'B5', 'B6',
+        'C1', 'C2', 'C3', 'C4', 'C5', 'C6',
+        'D1', 'D2', 'D3', 'D4', 'D5', 'D6',
+        'E1', 'E2', 'E3', 'E4', 'E5', 'E6',
+        'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
+        'G1', 'G2', 'G3', 'G4', 'G5', 'G6',
+        'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+        'I1', 'I2', 'I3', 'I4', 'I5', 'I6',
+        'J1', 'J2', 'J3', 'J4', 'J5', 'J6',
+        'K1', 'K2', 'K3', 'K4', 'K5', 'K6',
+        'L1', 'L2', 'L3', 'L4', 'L5', 'L6',
+        'R32_1', 'R32_2', 'R32_3', 'R32_4', 'R32_5', 'R32_6', 'R32_7', 'R32_8',
+        'R32_9', 'R32_10', 'R32_11', 'R32_12', 'R32_13', 'R32_14', 'R32_15', 'R32_16',
+        'R16_1', 'R16_2', 'R16_3', 'R16_4', 'R16_5', 'R16_6', 'R16_7', 'R16_8',
+        'QF1', 'QF2', 'QF3', 'QF4',
+        'SF1', 'SF2',
+        'TP1',
+        'FINAL',
+    ];
+
     /**
      * @param  array<int, array<string, mixed>>  $payloads
      * @return array<int, array<string, mixed>>
      */
     public function normalize(array $payloads): array
     {
-        usort($payloads, fn (array $a, array $b): int => ((int) ($a['MatchNumber'] ?? 0)) <=> ((int) ($b['MatchNumber'] ?? 0)));
-
-        return collect($payloads)
+        $matches = collect($payloads)
             ->map(fn (array $payload): ?array => $this->normalizeMatch($payload))
             ->filter()
             ->values()
             ->all();
+
+        usort($matches, function (array $a, array $b): int {
+            return $this->legacyOrder($a['id']) <=> $this->legacyOrder($b['id']);
+        });
+
+        return $matches;
     }
 
     /**
@@ -181,6 +207,15 @@ class FifaWorldCupResultNormalizer
     private function matchId(?int $matchNumber): ?string
     {
         return $matchNumber === null ? null : (self::LEGACY_MATCH_IDS[$matchNumber] ?? null);
+    }
+
+    private function legacyOrder(string $id): int
+    {
+        static $order = null;
+
+        $order ??= array_flip(self::LEGACY_GROUP_ORDER);
+
+        return $order[$id] ?? PHP_INT_MAX;
     }
 
     private function teamName(array $payload, string $side, string $placeholderKey): string

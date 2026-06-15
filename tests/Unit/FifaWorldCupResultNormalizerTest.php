@@ -102,4 +102,48 @@ class FifaWorldCupResultNormalizerTest extends TestCase
         $this->assertSame('Winner 89', $matches[0]['teamA']);
         $this->assertSame('Winner 90', $matches[0]['teamB']);
     }
+
+    public function test_it_preserves_legacy_match_order_for_existing_predictions(): void
+    {
+        $matches = (new FifaWorldCupResultNormalizer)->normalize([
+            [
+                'IdMatch' => '400021453',
+                'MatchNumber' => 5,
+                'Date' => '2026-06-14T01:00:00Z',
+                'GroupName' => [
+                    ['Locale' => 'en-GB', 'Description' => 'Group C'],
+                ],
+                'Home' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Haiti'],
+                    ],
+                ],
+                'Away' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Scotland'],
+                    ],
+                ],
+            ],
+            [
+                'IdMatch' => '400021456',
+                'MatchNumber' => 7,
+                'Date' => '2026-06-13T22:00:00Z',
+                'GroupName' => [
+                    ['Locale' => 'en-GB', 'Description' => 'Group C'],
+                ],
+                'Home' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Brazil'],
+                    ],
+                ],
+                'Away' => [
+                    'TeamName' => [
+                        ['Locale' => 'en-GB', 'Description' => 'Morocco'],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertSame(['C1', 'C2'], array_column($matches, 'id'));
+    }
 }
