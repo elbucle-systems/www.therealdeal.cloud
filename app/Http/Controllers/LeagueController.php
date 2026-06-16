@@ -485,8 +485,6 @@ class LeagueController extends Controller
 
         // All stage keys in order (for the nav)
         $allMatches = $matchRepository->all();
-        $fifaResultsLastUpdated = $matchRepository->lastFetchedAt();
-        $fifaResultsUnavailable = $fifaResultsLastUpdated === null || $allMatches === [];
         $allStages = $this->orderedStages(array_values(array_unique(array_column($allMatches, 'group'))));
         $groupStageKeys = array_values(array_filter($allStages, fn ($k) => str_starts_with($k, 'Group ')));
         $knockoutKeys = array_values(array_filter($allStages, fn ($k) => ! str_starts_with($k, 'Group ')));
@@ -610,9 +608,7 @@ class LeagueController extends Controller
             'knockoutKeys',
             'currentUsername',
             'realStandings',
-            'predictedStandingsByUser',
-            'fifaResultsLastUpdated',
-            'fifaResultsUnavailable'
+            'predictedStandingsByUser'
         ));
     }
 
