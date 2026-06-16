@@ -498,11 +498,10 @@ class LeagueController extends Controller
         $approvedUsernames = $allMembers->where('status', 'approved')
             ->pluck('user.username')->filter()->values()->all();
 
+        $stageMatches = $this->orderedMatchesForStage(array_values(array_filter($allMatches, fn ($m) => $m['group'] === $activeStage)));
+
         // Only fetch predictions for the active stage matches, scoped to this league via FK
-        $stageMatchIds = array_column(
-            array_filter($allMatches, fn ($m) => $m['group'] === $activeStage),
-            'id'
-        );
+        $stageMatchIds = array_column($stageMatches, 'id');
 
         $allPredictions = MatchPrediction::where('league_id', $league->id)
             ->whereIn('match_id', $stageMatchIds)
@@ -515,7 +514,6 @@ class LeagueController extends Controller
         }
 
         $now = now();
-        $stageMatches = array_values(array_filter($allMatches, fn ($m) => $m['group'] === $activeStage));
         $isGroupStage = str_starts_with($activeStage, 'Group ');
         $realStandings = [];
         $predictedStandingsByUser = [];
@@ -527,11 +525,7 @@ class LeagueController extends Controller
         }
 
         $matches = [];
-        foreach ($allMatches as $match) {
-            if ($match['group'] !== $activeStage) {
-                continue;
-            }
-
+        foreach ($stageMatches as $match) {
             $kickoff = $matchRepository->kickoff($match);
             $matchStarted = $kickoff->lte($now);
 
@@ -610,6 +604,20 @@ class LeagueController extends Controller
             'realStandings',
             'predictedStandingsByUser'
         ));
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $matches
+     * @return array<int, array<string, mixed>>
+     */
+    private function orderedMatchesForStage(array $matches): array
+    {
+        usort($matches, function (array $a, array $b): int {
+            return strcmp((string) ($a['date'] ?? ''), (string) ($b['date'] ?? ''))
+                ?: (($a['matchNumber'] ?? PHP_INT_MAX) <=> ($b['matchNumber'] ?? PHP_INT_MAX));
+        });
+
+        return $matches;
     }
 
     /**

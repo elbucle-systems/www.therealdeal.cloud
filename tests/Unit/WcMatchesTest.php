@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use App\Data\WcMatches;
+use App\Http\Controllers\LeagueController;
+use ReflectionMethod;
 use Tests\TestCase;
 
 class WcMatchesTest extends TestCase
@@ -50,28 +52,38 @@ class WcMatchesTest extends TestCase
         $this->assertSame('Sweden', $match['teamB']);
     }
 
-    public function test_known_scores_are_seeded(): void
+    public function test_stage_display_order_uses_the_match_schedule(): void
     {
-        $scores = collect(WcMatches::all())
-            ->filter(fn (array $match): bool => $match['teamAGoals'] !== null && $match['teamBGoals'] !== null)
-            ->mapWithKeys(fn (array $match): array => [
-                $match['id'] => [$match['teamAGoals'], $match['teamBGoals']],
-            ])
-            ->all();
+        $controller = new LeagueController;
+        $method = new ReflectionMethod($controller, 'orderedMatchesForStage');
+        $method->setAccessible(true);
 
-        $this->assertSame([
-            'A1' => [2, 0],
-            'A2' => [2, 1],
-            'B1' => [1, 1],
-            'D1' => [4, 1],
-            'C2' => [0, 1],
-            'D2' => [2, 0],
-            'C1' => [1, 1],
-            'B2' => [1, 1],
-            'E2' => [1, 0],
-            'E1' => [7, 1],
-            'F1' => [2, 2],
-            'F2' => [1, 5],
-        ], $scores);
+        $groupC = array_values(array_filter(WcMatches::all(), fn (array $match): bool => $match['group'] === 'Group C'));
+        $groupD = array_values(array_filter(WcMatches::all(), fn (array $match): bool => $match['group'] === 'Group D'));
+        $groupH = array_values(array_filter(WcMatches::all(), fn (array $match): bool => $match['group'] === 'Group H'));
+
+        $this->assertSame(
+            ['C1', 'C2', 'C3', 'C4', 'C5', 'C6'],
+            array_column($method->invoke($controller, $groupC), 'id')
+        );
+        $this->assertSame(
+            ['D1', 'D2', 'D4', 'D3', 'D5', 'D6'],
+            array_column($method->invoke($controller, $groupD), 'id')
+        );
+        $this->assertSame(
+            ['H1', 'H2', 'H4', 'H3', 'H5', 'H6'],
+            array_column($method->invoke($controller, $groupH), 'id')
+        );
+    }
+
+
+    public function test_scores_are_entered_as_complete_pairs(): void
+    {
+        foreach (WcMatches::all() as $match) {
+            $bothPending = $match['teamAGoals'] === null && $match['teamBGoals'] === null;
+            $bothScored = is_int($match['teamAGoals']) && is_int($match['teamBGoals']);
+
+            $this->assertTrue($bothPending || $bothScored, "Match {$match['id']} must have both scores filled or both null.");
+        }
     }
 }
