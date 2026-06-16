@@ -126,7 +126,7 @@
 
                         <header class="match__header">
                             <time class="match__date" datetime="{{ $match['date'] }}"></time>
-                            <span class="match__number">{{ __('app.league.match_number', ['number' => $match['matchNumber']]) }}</span>
+                            <span class="match__number">{{ __('app.league.match_number', ['number' => $match['displayNumber'] ?? $match['matchNumber']]) }}</span>
                             @if (!$locked)
                                 <span class="match__deadline-hint">{{ __('app.league.deadline') }}:
                                     <time datetime="{{ $match['deadline'] }}"></time></span>

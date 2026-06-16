@@ -485,6 +485,11 @@ class LeagueController extends Controller
 
         // All stage keys in order (for the nav)
         $allMatches = $matchRepository->all();
+        $allMatches = array_map(
+            fn (array $match, int $index): array => $match + ['displayNumber' => $index + 1],
+            $allMatches,
+            array_keys($allMatches)
+        );
         $allStages = $this->orderedStages(array_values(array_unique(array_column($allMatches, 'group'))));
         $groupStageKeys = array_values(array_filter($allStages, fn ($k) => str_starts_with($k, 'Group ')));
         $knockoutKeys = array_values(array_filter($allStages, fn ($k) => ! str_starts_with($k, 'Group ')));
