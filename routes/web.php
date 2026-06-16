@@ -5,10 +5,19 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LeagueController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
+use App\Services\ActiveLeagueResolver;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    if (! auth()->check()) {
+        return redirect()->route('login');
+    }
+
+    $activeLeagueId = app(ActiveLeagueResolver::class)->activeId();
+
+    return $activeLeagueId
+        ? redirect()->route('leagues.show', $activeLeagueId)
+        : view('welcome');
 });
 
 Route::get('/language/{locale}', function (string $locale) {
@@ -23,11 +32,9 @@ Route::get('/language/{locale}', function (string $locale) {
     return back();
 })->name('language.switch');
 
-// Registration
-Route::get('/register', [AuthController::class, 'showRegisterEmail'])->name('register')->middleware('guest');
-Route::post('/register', [AuthController::class, 'registerEmail'])->middleware('guest');
-Route::get('/final-registration', [AuthController::class, 'showFinalRegistration'])->name('register.complete');
-Route::post('/final-registration', [AuthController::class, 'completeRegistration']);
+// Registration is closed for the active tournament.
+Route::redirect('/register', '/login')->name('register');
+Route::redirect('/final-registration', '/login')->name('register.complete');
 
 // Login / Logout
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login')->middleware('guest');
@@ -51,17 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
     Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues.index');
-    Route::get('/leagues/create', [LeagueController::class, 'create'])->name('leagues.create');
-    Route::post('/leagues', [LeagueController::class, 'store'])->name('leagues.store');
-    Route::get('/leagues/join', [LeagueController::class, 'join'])->name('leagues.join');
-    Route::post('/leagues/join', [LeagueController::class, 'processJoin'])->name('leagues.join.post');
+    Route::redirect('/leagues/create', '/leagues')->name('leagues.create');
+    Route::redirect('/leagues/join', '/leagues')->name('leagues.join');
     Route::get('/leagues/{id}', [LeagueController::class, 'show'])->name('leagues.show');
     Route::get('/leagues/{id}/edit', [LeagueController::class, 'edit'])->name('leagues.edit');
     Route::put('/leagues/{id}', [LeagueController::class, 'update'])->name('leagues.update');
-    Route::post('/leagues/{id}/delete', [LeagueController::class, 'destroy'])->name('leagues.destroy');
     Route::get('/leagues/{id}/members', [LeagueController::class, 'showMembers'])->name('leagues.members');
-    Route::post('/leagues/{id}/members/{userId}/approve', [LeagueController::class, 'approveMember'])->name('leagues.members.approve');
-    Route::post('/leagues/{id}/members/{userId}/remove', [LeagueController::class, 'removeMember'])->name('leagues.members.remove');
     Route::get('/leagues/{id}/matches', [LeagueController::class, 'showMatches'])->name('leagues.matches');
 });
 

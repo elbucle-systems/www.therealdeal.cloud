@@ -57,11 +57,6 @@
                         </button>
                     </form>
                 @else
-                    <a class="nav__link {{ request()->is('register') ? 'nav__link--active' : '' }}"
-                        href="{{ route('register') }}">
-                        <x-lucide-user-plus width="18" height="18" />
-                        {{ __('app.nav.register') }}
-                    </a>
                     <a class="nav__link {{ request()->is('login') ? 'nav__link--active' : '' }}"
                         href="{{ route('login') }}">
                         <x-lucide-log-in width="18" height="18" />

@@ -18,18 +18,6 @@
         <div class="league-detail__header">
             <div class="league-detail__title-group">
                 <h1 class="league-detail__title">{{ $league->name }}</h1>
-                <div class="league-detail__code-row">
-                    <span class="league-detail__code-label">{{ __('app.league.invite_code') }}</span>
-                    <button class="league-detail__code" id="copy-code" data-code="{{ $league->unique_code }}"
-                        title="{{ __('app.league.copy_title') }}">
-                        {{ $league->unique_code }}
-                        <span id="copy-icon">
-                            <x-lucide-clipboard-copy width="14" height="14"
-                                style="margin-left:6px;vertical-align:middle" />
-                        </span>
-                    </button>
-                    <span class="league-detail__code-hint">{{ __('app.league.click_to_copy') }}</span>
-                </div>
             </div>
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">

@@ -40,6 +40,12 @@
                         <p class="form__error">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <label class="form__checkbox">
+                    <input class="form__checkbox-input" type="checkbox" name="remember" value="1"
+                        @checked(old('remember'))>
+                    <span>{{ __('app.auth.remember_me') }}</span>
+                </label>
             </div>
 
             <footer class="form__footer">

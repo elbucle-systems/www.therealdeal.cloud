@@ -84,6 +84,25 @@
     margin: 0;
 }
 
+.form__checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    color: var(--foreground);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+.form__checkbox-input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-green);
+    cursor: pointer;
+}
+
 .form__success {
     color: var(--primary-green);
     font-size: 14px;

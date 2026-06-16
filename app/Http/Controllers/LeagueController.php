@@ -4,9 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\League;
 use App\Models\MatchPrediction;
-use App\Models\User;
-use App\Notifications\LeagueJoinRequestNotification;
 use App\Notifications\LeagueRulesNotification;
+use App\Services\ActiveLeagueResolver;
 use App\Services\LeagueRulesSummary;
 use App\Services\StandingsCalculator;
 use App\Services\WorldCupMatchRepository;
@@ -17,19 +16,18 @@ class LeagueController extends Controller
 {
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
-    private function generateUniqueCode(): string
+    private function activeLeague(): ?League
     {
-        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        for ($attempt = 0; $attempt < 10; $attempt++) {
-            $code = '';
-            for ($i = 0; $i < 6; $i++) {
-                $code .= $chars[random_int(0, strlen($chars) - 1)];
-            }
-            if (! League::where('unique_code', $code)->exists()) {
-                return $code;
-            }
-        }
-        throw new \RuntimeException('Could not generate a unique league code after 10 attempts');
+        return app(ActiveLeagueResolver::class)->active();
+    }
+
+    private function redirectToActiveLeague()
+    {
+        $activeLeague = $this->activeLeague();
+
+        abort_unless($activeLeague, 404);
+
+        return redirect()->route('leagues.show', $activeLeague->id);
     }
 
     private function outcomeSign(int $a, int $b): int
@@ -131,68 +129,25 @@ class LeagueController extends Controller
 
     public function index()
     {
-        $userId = Auth::id();
-
-        /** @var User $authUser */
-        $authUser = Auth::user();
-        $memberships = $authUser->leagueMembers()
-            ->with(['league' => fn ($q) => $q->withCount(['members as member_count' => fn ($q) => $q->where('status', 'approved')])])
-            ->get();
-
-        $leagues = $memberships->map(function ($m) {
-            $league = $m->league;
-            $league->member_status = $m->status;
-
-            return $league;
-        });
-
-        $managing = $leagues->filter(fn ($l) => $l->manager_id === $userId)->values();
-        $memberOf = $leagues->filter(fn ($l) => $l->manager_id !== $userId)->values();
-
-        return view('leagues.index', compact('managing', 'memberOf'));
+        return $this->redirectToActiveLeague();
     }
 
     // ─── Create ───────────────────────────────────────────────────────────────
-
-    public function create()
-    {
-        return view('leagues.create');
-    }
-
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'min:3', 'max:100', 'unique:leagues,name'],
-            'points_per_score' => ['required', 'integer', 'min:0'],
-            'points_per_result' => ['required', 'integer', 'min:0'],
-            'predictions_visible_before_game' => ['sometimes', 'boolean'],
-            'members_size_limit' => ['nullable', 'integer', 'min:2'],
-        ]);
-
-        $data['predictions_visible_before_game'] = $request->boolean('predictions_visible_before_game');
-        $data['grouped_deadline'] = false;
-        $data['deadline_days'] = 0;
-        $data['manager_id'] = Auth::id();
-        $data['unique_code'] = $this->generateUniqueCode();
-
-        $league = League::create($data);
-
-        // Auto-approve manager as a member
-        $league->members()->create([
-            'user_id' => Auth::id(),
-            'status' => 'approved',
-        ]);
-
-        return redirect()->route('leagues.show', $league->id)
-            ->with('success', __('app.flash.league_created'));
-    }
 
     // ─── Show ─────────────────────────────────────────────────────────────────
 
     public function show(int $id)
     {
         $userId = Auth::id();
-        $league = League::findOrFail($id);
+        $activeLeague = $this->activeLeague();
+
+        abort_unless($activeLeague, 404);
+
+        if ($activeLeague->id !== $id) {
+            return redirect()->route('leagues.show', $activeLeague->id);
+        }
+
+        $league = $activeLeague;
 
         $allMembers = $league->members()->with('user:id,username')->get();
         $membership = $allMembers->firstWhere('user_id', $userId);
@@ -220,7 +175,13 @@ class LeagueController extends Controller
 
     public function edit(int $id)
     {
-        $league = League::findOrFail($id);
+        $league = $this->activeLeague();
+
+        abort_unless($league, 404);
+
+        if ($league->id !== $id) {
+            return redirect()->route('leagues.edit', $league->id);
+        }
 
         if ($league->manager_id !== Auth::id()) {
             return redirect()->route('leagues.show', $id);
@@ -231,7 +192,13 @@ class LeagueController extends Controller
 
     public function update(Request $request, int $id, LeagueRulesSummary $rules)
     {
-        $league = League::findOrFail($id);
+        $league = $this->activeLeague();
+
+        abort_unless($league, 404);
+
+        if ($league->id !== $id) {
+            return redirect()->route('leagues.edit', $league->id);
+        }
 
         if ($league->manager_id !== Auth::id()) {
             return redirect()->route('leagues.show', $id);
@@ -269,104 +236,19 @@ class LeagueController extends Controller
 
     // ─── Destroy ──────────────────────────────────────────────────────────────
 
-    public function destroy(int $id)
-    {
-        $league = League::findOrFail($id);
-
-        if ($league->manager_id !== Auth::id()) {
-            return redirect()->route('leagues.index');
-        }
-
-        $league->delete();
-
-        return redirect()->route('leagues.index')
-            ->with('success', __('app.flash.league_deleted'));
-    }
-
     // ─── Join ─────────────────────────────────────────────────────────────────
-
-    public function join(Request $request, LeagueRulesSummary $rules)
-    {
-        $previewLeague = null;
-
-        if ($request->filled('unique_code')) {
-            $request->validate([
-                'unique_code' => ['required', 'string', 'size:6', 'regex:/^[A-Z0-9]{6}$/'],
-            ]);
-
-            $previewLeague = League::where('unique_code', strtoupper($request->query('unique_code')))->first();
-
-            if (! $previewLeague) {
-                return redirect()->route('leagues.join')
-                    ->withErrors(['unique_code' => __('app.flash.league_not_found')])
-                    ->withInput();
-            }
-        }
-
-        return view('leagues.join', [
-            'previewLeague' => $previewLeague,
-            'previewRules' => $previewLeague ? $rules->forLeague($previewLeague) : null,
-        ]);
-    }
-
-    public function processJoin(Request $request, LeagueRulesSummary $rules)
-    {
-        $request->validate([
-            'unique_code' => ['required', 'string', 'size:6', 'regex:/^[A-Z0-9]{6}$/'],
-            'rules_confirmed' => ['accepted'],
-        ]);
-
-        $code = strtoupper($request->input('unique_code'));
-        $userId = Auth::id();
-        $league = League::where('unique_code', $code)->first();
-
-        if (! $league) {
-            return back()->withErrors(['unique_code' => __('app.flash.league_not_found')])->withInput();
-        }
-
-        $existing = $league->members()->where('user_id', $userId)->first();
-
-        if ($existing) {
-            $msg = $existing->status === 'approved'
-                ? __('app.flash.you_are_member')
-                : __('app.flash.join_request_pending');
-
-            return back()->withErrors(['unique_code' => $msg])->withInput();
-        }
-
-        if ($league->members_size_limit !== null) {
-            $count = $league->members()->where('status', 'approved')->count();
-            if ($count >= $league->members_size_limit) {
-                return back()->withErrors(['unique_code' => __('app.flash.league_full')])->withInput();
-            }
-        }
-
-        $league->members()->create([
-            'user_id' => $userId,
-            'status' => 'pending',
-        ]);
-
-        Auth::user()->notify(
-            (new LeagueRulesNotification($rules->forLeague($league), 'joined'))
-                ->locale(Auth::user()->locale ?? config('app.locale'))
-        );
-
-        if ($league->manager) {
-            $league->manager->notify(
-                (new LeagueJoinRequestNotification($league, Auth::user()))
-                    ->locale($league->manager->locale ?? config('app.locale'))
-            );
-        }
-
-        return redirect()->route('leagues.show', $league->id)
-            ->with('success', __('app.flash.join_request_sent'));
-    }
 
     // ─── Members ──────────────────────────────────────────────────────────────
 
     public function showMembers(int $id)
     {
-        $league = League::findOrFail($id);
+        $league = $this->activeLeague();
+
+        abort_unless($league, 404);
+
+        if ($league->id !== $id) {
+            return redirect()->route('leagues.members', $league->id);
+        }
 
         if ($league->manager_id !== Auth::id()) {
             return redirect()->route('leagues.show', $id);
@@ -393,38 +275,6 @@ class LeagueController extends Controller
         return view('leagues.members', compact('league', 'pending', 'approved'));
     }
 
-    public function approveMember(Request $request, int $id, int $userId)
-    {
-        $league = League::findOrFail($id);
-
-        if ($league->manager_id !== Auth::id()) {
-            return redirect()->route('leagues.show', $id);
-        }
-
-        if ($league->members_size_limit !== null) {
-            $count = $league->members()->where('status', 'approved')->count();
-            if ($count >= $league->members_size_limit) {
-                return redirect()->route('leagues.members', $id)
-                    ->withErrors(['approve' => __('app.flash.league_full_approve')]);
-            }
-        }
-
-        $league->members()
-            ->where('user_id', $userId)
-            ->where('status', 'pending')
-            ->update(['status' => 'approved']);
-
-        if ($user = User::find($userId)) {
-            $rules = app(LeagueRulesSummary::class);
-            $user->notify(
-                (new LeagueRulesNotification($rules->forLeague($league), 'approved'))
-                    ->locale($user->locale ?? config('app.locale'))
-            );
-        }
-
-        return redirect()->route('leagues.members', $id);
-    }
-
     /**
      * @param  array<int, string>  $changedFields
      */
@@ -445,32 +295,19 @@ class LeagueController extends Controller
             });
     }
 
-    public function removeMember(Request $request, int $id, int $userId)
-    {
-        $league = League::findOrFail($id);
-
-        if ($league->manager_id !== Auth::id()) {
-            return redirect()->route('leagues.show', $id);
-        }
-
-        if ($userId === Auth::id()) {
-            return redirect()->route('leagues.members', $id)
-                ->withErrors(['remove' => __('app.flash.manager_cannot_remove_self')]);
-        }
-
-        $league->members()
-            ->where('user_id', $userId)
-            ->delete();
-
-        return redirect()->route('leagues.members', $id);
-    }
-
     // ─── Matches ──────────────────────────────────────────────────────────────
 
     public function showMatches(Request $request, int $id)
     {
         $userId = Auth::id();
-        $league = League::findOrFail($id);
+        $league = $this->activeLeague();
+
+        abort_unless($league, 404);
+
+        if ($league->id !== $id) {
+            return redirect()->route('leagues.matches', ['id' => $league->id, 'stage' => $request->query('stage')]);
+        }
+
         $matchRepository = app(WorldCupMatchRepository::class);
 
         $allMembers = $league->members()->with('user:id,username')->get();

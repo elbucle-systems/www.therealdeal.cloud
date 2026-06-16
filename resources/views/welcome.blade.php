@@ -15,16 +15,10 @@
                         {{ __('app.nav.my_leagues') }}
                         <x-lucide-arrow-right width="18" height="18" />
                     </a>
-                    <a class="btn btn--secondary btn--lg" href="{{ route('leagues.join') }}">
-                        {{ __('app.actions.join_a_league') }}
-                    </a>
                 @else
-                    <a class="btn btn--primary btn--lg" href="{{ route('register') }}">
-                        {{ __('app.actions.get_started') }}
-                        <x-lucide-arrow-right width="18" height="18" />
-                    </a>
-                    <a class="btn btn--ghost btn--lg" href="{{ route('login') }}">
+                    <a class="btn btn--primary btn--lg" href="{{ route('login') }}">
                         {{ __('app.actions.log_in') }}
+                        <x-lucide-arrow-right width="18" height="18" />
                     </a>
                 @endauth
             </div>
@@ -115,8 +109,8 @@
         @guest
             <section class="landing__bottom-cta">
                 <h2 class="landing__headline landing__headline--sm">{{ __('app.landing.ready') }}</h2>
-                <a class="btn btn--primary btn--lg" href="{{ route('register') }}">
-                    {{ __('app.actions.create_account') }}
+                <a class="btn btn--primary btn--lg" href="{{ route('login') }}">
+                    {{ __('app.actions.log_in') }}
                     <x-lucide-arrow-right width="18" height="18" />
                 </a>
             </section>
