@@ -145,7 +145,7 @@ final class WcMatches
             ['id' => 'H2', 'group' => 'Group H', 'date' => '2026-06-15T22:00:00Z', 'matchNumber' => 13, 'teamA' => 'Saudi Arabia', 'teamAGoals' => 1, 'teamBGoals' => 1, 'teamB' => 'Uruguay'],
             ['id' => 'G2', 'group' => 'Group G', 'date' => '2026-06-16T01:00:00Z', 'matchNumber' => 15, 'teamA' => 'Iran', 'teamAGoals' => 2, 'teamBGoals' => 2, 'teamB' => 'New Zealand'],
             ['id' => 'I1', 'group' => 'Group I', 'date' => '2026-06-16T19:00:00Z', 'matchNumber' => 17, 'teamA' => 'France', 'teamAGoals' => 3, 'teamBGoals' => 1, 'teamB' => 'Senegal'],
-            ['id' => 'I2', 'group' => 'Group I', 'date' => '2026-06-16T22:00:00Z', 'matchNumber' => 18, 'teamA' => 'Norway', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Iraq'],
+            ['id' => 'I2', 'group' => 'Group I', 'date' => '2026-06-16T22:00:00Z', 'matchNumber' => 18, 'teamA' => 'Norway', 'teamAGoals' => 4, 'teamBGoals' => 1, 'teamB' => 'Iraq'],
             ['id' => 'J1', 'group' => 'Group J', 'date' => '2026-06-17T01:00:00Z', 'matchNumber' => 19, 'teamA' => 'Argentina', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Algeria'],
             ['id' => 'J2', 'group' => 'Group J', 'date' => '2026-06-17T04:00:00Z', 'matchNumber' => 20, 'teamA' => 'Austria', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Jordan'],
             ['id' => 'K1', 'group' => 'Group K', 'date' => '2026-06-17T17:00:00Z', 'matchNumber' => 23, 'teamA' => 'Portugal', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'DR Congo'],
