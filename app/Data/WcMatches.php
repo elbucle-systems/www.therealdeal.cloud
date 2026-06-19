@@ -155,7 +155,7 @@ final class WcMatches
             ['id' => 'A3', 'group' => 'Group A', 'date' => '2026-06-18T16:00:00Z', 'matchNumber' => 25, 'teamA' => 'South Africa', 'teamAGoals' => 1, 'teamBGoals' => 1, 'teamB' => 'Czech Republic'],
             ['id' => 'B3', 'group' => 'Group B', 'date' => '2026-06-18T19:00:00Z', 'matchNumber' => 26, 'teamA' => 'Switzerland', 'teamAGoals' => 4, 'teamBGoals' => 1, 'teamB' => 'Bosnia and Herzegovina'],
             ['id' => 'B4', 'group' => 'Group B', 'date' => '2026-06-18T22:00:00Z', 'matchNumber' => 28, 'teamA' => 'Canada', 'teamAGoals' => 6, 'teamBGoals' => 0, 'teamB' => 'Qatar'],
-            ['id' => 'A4', 'group' => 'Group A', 'date' => '2026-06-19T01:00:00Z', 'matchNumber' => 27, 'teamA' => 'Mexico', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'South Korea'],
+            ['id' => 'A4', 'group' => 'Group A', 'date' => '2026-06-19T01:00:00Z', 'matchNumber' => 27, 'teamA' => 'Mexico', 'teamAGoals' => 1, 'teamBGoals' => 0, 'teamB' => 'South Korea'],
             ['id' => 'D4', 'group' => 'Group D', 'date' => '2026-06-19T04:00:00Z', 'matchNumber' => 31, 'teamA' => 'Paraguay', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Turkey'],
             ['id' => 'C3', 'group' => 'Group C', 'date' => '2026-06-19T19:00:00Z', 'matchNumber' => 30, 'teamA' => 'Scotland', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Morocco'],
             ['id' => 'D3', 'group' => 'Group D', 'date' => '2026-06-19T19:00:00Z', 'matchNumber' => 32, 'teamA' => 'United States', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Australia'],
