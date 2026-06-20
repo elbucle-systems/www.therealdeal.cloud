@@ -159,7 +159,7 @@ final class WcMatches
             ['id' => 'D4', 'group' => 'Group D', 'date' => '2026-06-20T04:00:00Z', 'matchNumber' => 31, 'teamA' => 'Paraguay', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Turkey'],
             ['id' => 'C3', 'group' => 'Group C', 'date' => '2026-06-19T19:00:00Z', 'matchNumber' => 30, 'teamA' => 'Scotland', 'teamAGoals' => 0, 'teamBGoals' => 1, 'teamB' => 'Morocco'],
             ['id' => 'D3', 'group' => 'Group D', 'date' => '2026-06-19T19:00:00Z', 'matchNumber' => 32, 'teamA' => 'United States', 'teamAGoals' => 2, 'teamBGoals' => 0, 'teamB' => 'Australia'],
-            ['id' => 'C4', 'group' => 'Group C', 'date' => '2026-06-20T00:30:00Z', 'matchNumber' => 29, 'teamA' => 'Brazil', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Haiti'],
+            ['id' => 'C4', 'group' => 'Group C', 'date' => '2026-06-20T00:30:00Z', 'matchNumber' => 29, 'teamA' => 'Brazil', 'teamAGoals' => 3, 'teamBGoals' => 0, 'teamB' => 'Haiti'],
             ['id' => 'F4', 'group' => 'Group F', 'date' => '2026-06-20T04:00:00Z', 'matchNumber' => 36, 'teamA' => 'Tunisia', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Japan'],
             ['id' => 'F3', 'group' => 'Group F', 'date' => '2026-06-20T17:00:00Z', 'matchNumber' => 35, 'teamA' => 'Netherlands', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Sweden'],
             ['id' => 'E3', 'group' => 'Group E', 'date' => '2026-06-20T20:00:00Z', 'matchNumber' => 33, 'teamA' => 'Germany', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Ivory Coast'],
