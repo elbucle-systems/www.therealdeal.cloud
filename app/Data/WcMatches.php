@@ -175,7 +175,7 @@ final class WcMatches
             ['id' => 'K3', 'group' => 'Group K', 'date' => '2026-06-23T17:00:00Z', 'matchNumber' => 47, 'teamA' => 'Portugal', 'teamAGoals' => 5, 'teamBGoals' => 0, 'teamB' => 'Uzbekistan'],
             ['id' => 'L4', 'group' => 'Group L', 'date' => '2026-06-23T20:00:00Z', 'matchNumber' => 45, 'teamA' => 'England', 'teamAGoals' => 0, 'teamBGoals' => 0, 'teamB' => 'Ghana'],
             ['id' => 'L3', 'group' => 'Group L', 'date' => '2026-06-23T23:00:00Z', 'matchNumber' => 46, 'teamA' => 'Panama', 'teamAGoals' => 0, 'teamBGoals' => 1, 'teamB' => 'Croatia'],
-            ['id' => 'K4', 'group' => 'Group K', 'date' => '2026-06-24T02:00:00Z', 'matchNumber' => 48, 'teamA' => 'Colombia', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'DR Congo'],
+            ['id' => 'K4', 'group' => 'Group K', 'date' => '2026-06-24T02:00:00Z', 'matchNumber' => 48, 'teamA' => 'Colombia', 'teamAGoals' => 1, 'teamBGoals' => 0, 'teamB' => 'DR Congo'],
             ['id' => 'B5', 'group' => 'Group B', 'date' => '2026-06-24T19:00:00Z', 'matchNumber' => 51, 'teamA' => 'Canada', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Switzerland'],
             ['id' => 'B6', 'group' => 'Group B', 'date' => '2026-06-24T19:00:00Z', 'matchNumber' => 52, 'teamA' => 'Qatar', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Bosnia and Herzegovina'],
             ['id' => 'C5', 'group' => 'Group C', 'date' => '2026-06-24T22:00:00Z', 'matchNumber' => 49, 'teamA' => 'Scotland', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Brazil'],
