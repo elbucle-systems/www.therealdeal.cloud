@@ -178,7 +178,7 @@ final class WcMatches
             ['id' => 'K4', 'group' => 'Group K', 'date' => '2026-06-24T02:00:00Z', 'matchNumber' => 48, 'teamA' => 'Colombia', 'teamAGoals' => 1, 'teamBGoals' => 0, 'teamB' => 'DR Congo'],
             ['id' => 'B5', 'group' => 'Group B', 'date' => '2026-06-24T19:00:00Z', 'matchNumber' => 51, 'teamA' => 'Canada', 'teamAGoals' => 1, 'teamBGoals' => 2, 'teamB' => 'Switzerland'],
             ['id' => 'B6', 'group' => 'Group B', 'date' => '2026-06-24T19:00:00Z', 'matchNumber' => 52, 'teamA' => 'Qatar', 'teamAGoals' => 1, 'teamBGoals' => 3, 'teamB' => 'Bosnia and Herzegovina'],
-            ['id' => 'C5', 'group' => 'Group C', 'date' => '2026-06-24T22:00:00Z', 'matchNumber' => 49, 'teamA' => 'Scotland', 'teamAGoals' => 3, 'teamBGoals' => 0, 'teamB' => 'Brazil'],
+            ['id' => 'C5', 'group' => 'Group C', 'date' => '2026-06-24T22:00:00Z', 'matchNumber' => 49, 'teamA' => 'Scotland', 'teamAGoals' => 0, 'teamBGoals' => 3, 'teamB' => 'Brazil'],
             ['id' => 'C6', 'group' => 'Group C', 'date' => '2026-06-24T22:00:00Z', 'matchNumber' => 50, 'teamA' => 'Morocco', 'teamAGoals' => 4, 'teamBGoals' => 2, 'teamB' => 'Haiti'],
             ['id' => 'A5', 'group' => 'Group A', 'date' => '2026-06-25T01:00:00Z', 'matchNumber' => 53, 'teamA' => 'Mexico', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Czech Republic'],
             ['id' => 'A6', 'group' => 'Group A', 'date' => '2026-06-25T01:00:00Z', 'matchNumber' => 54, 'teamA' => 'South Korea', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'South Africa'],
