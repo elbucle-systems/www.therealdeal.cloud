@@ -192,6 +192,8 @@ return [
         'unlimited' => 'Ilimitado',
         'pending_notice' => 'Tu membresia esta pendiente de aprobacion por el administrador. Podras ver la tabla cuando te aprueben.',
         'standings' => 'TABLA',
+        'group_stage_standings' => 'TABLA DE GRUPOS',
+        'knockout_standings' => 'TABLA DE ELIMINATORIAS',
         'real_standings' => 'Tabla real',
         'predicted_standings_for' => 'Predicciones de :username',
         'team' => 'Equipo',

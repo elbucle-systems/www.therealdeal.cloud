@@ -91,6 +91,18 @@ class ActiveLeagueAccessTest extends TestCase
             ->assertRedirect(route('leagues.show', $this->activeLeague->id));
     }
 
+    public function test_league_page_shows_group_and_knockout_standings(): void
+    {
+        $this->migrateDatabaseOrSkip();
+        $this->seedLeagues();
+
+        $this->actingAs($this->user)
+            ->get(route('leagues.show', $this->activeLeague->id))
+            ->assertOk()
+            ->assertSee('GROUP STAGE STANDINGS')
+            ->assertSee('KNOCKOUT STANDINGS');
+    }
+
     public function test_disabled_league_creation_and_join_routes_redirect_to_active_league_entry(): void
     {
         $this->migrateDatabaseOrSkip();

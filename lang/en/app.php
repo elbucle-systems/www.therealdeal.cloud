@@ -192,6 +192,8 @@ return [
         'unlimited' => 'Unlimited',
         'pending_notice' => "Your membership is pending approval from the league manager. You'll be able to view standings once approved.",
         'standings' => 'STANDINGS',
+        'group_stage_standings' => 'GROUP STAGE STANDINGS',
+        'knockout_standings' => 'KNOCKOUT STANDINGS',
         'real_standings' => 'Real standings',
         'predicted_standings_for' => ':username predictions',
         'team' => 'Team',

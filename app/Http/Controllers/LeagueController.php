@@ -42,7 +42,7 @@ class LeagueController extends Controller
         return 0;
     }
 
-    private function computeStandings(League $league, $approvedMembers = null): array
+    private function computeStandings(League $league, $approvedMembers = null, ?callable $matchFilter = null): array
     {
         $now = now();
         $matchRepository = app(WorldCupMatchRepository::class);
@@ -72,7 +72,8 @@ class LeagueController extends Controller
 
         $playedMatches = array_filter(
             $matchRepository->all(),
-            fn ($m) => $matchRepository->kickoff($m)->lt($now)
+            fn ($m) => ($matchFilter === null || $matchFilter($m))
+                && $matchRepository->kickoff($m)->lt($now)
                 && $m['teamAGoals'] !== null
                 && $m['teamBGoals'] !== null
         );
@@ -163,12 +164,24 @@ class LeagueController extends Controller
         $league->member_count = $approvedMembers->count();
 
         $standings = $membership->status === 'approved'
-            ? $this->computeStandings($league, $approvedMembers)
+            ? $this->computeStandings(
+                $league,
+                $approvedMembers,
+                fn (array $match): bool => str_starts_with($match['group'], 'Group ')
+            )
+            : [];
+
+        $knockoutStandings = $membership->status === 'approved'
+            ? $this->computeStandings(
+                $league,
+                $approvedMembers,
+                fn (array $match): bool => ! str_starts_with($match['group'], 'Group ')
+            )
             : [];
 
         $isManager = $league->manager_id === $userId;
 
-        return view('leagues.show', compact('league', 'standings', 'isManager'));
+        return view('leagues.show', compact('league', 'standings', 'knockoutStandings', 'isManager'));
     }
 
     // ─── Edit / Update ────────────────────────────────────────────────────────
