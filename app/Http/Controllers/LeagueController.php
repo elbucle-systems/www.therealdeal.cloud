@@ -371,7 +371,7 @@ class LeagueController extends Controller
             $kickoff = $matchRepository->kickoff($match);
             $matchStarted = $kickoff->lte($now);
 
-            $deadline = $kickoff;
+            $deadline = $matchRepository->deadline($match, $league->deadline_days ?? 0);
             $locked = $now->gte($deadline);
 
             $matchPredMap = $predMap[$match['id']] ?? [];

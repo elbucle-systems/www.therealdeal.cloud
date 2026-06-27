@@ -41,9 +41,7 @@ class MatchApiController extends Controller
         // Gate: not locked (deadline has not passed)
         $league = $membership->league;
         $now = now();
-        $kickoff = $matchRepository->kickoff($match);
-
-        $deadline = $kickoff;
+        $deadline = $matchRepository->deadline($match, $league->deadline_days ?? 0);
 
         if ($now->gte($deadline)) {
             return response()->json(['error' => __('app.api.prediction_locked')], 403);

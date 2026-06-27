@@ -29,7 +29,7 @@ class WorldCupMatchRepository
 
     public function deadline(string|array $match, int $deadlineDays): CarbonImmutable
     {
-        return $this->kickoff($match)->subDays($deadlineDays);
+        return WcMatches::deadline($match, $deadlineDays);
     }
 
     public function receivesDeadlineReminders(array $match): bool
