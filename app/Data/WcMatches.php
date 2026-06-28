@@ -194,10 +194,10 @@ final class WcMatches
             ['id' => 'H6', 'group' => 'Group H', 'date' => '2026-06-27T00:00:00Z', 'matchNumber' => 66, 'teamA' => 'Uruguay', 'teamAGoals' => 0, 'teamBGoals' => 1, 'teamB' => 'Spain'],
             ['id' => 'G5', 'group' => 'Group G', 'date' => '2026-06-27T03:00:00Z', 'matchNumber' => 63, 'teamA' => 'Egypt', 'teamAGoals' => 1, 'teamBGoals' => 1, 'teamB' => 'Iran'],
             ['id' => 'G6', 'group' => 'Group G', 'date' => '2026-06-27T03:00:00Z', 'matchNumber' => 64, 'teamA' => 'New Zealand', 'teamAGoals' => 1, 'teamBGoals' => 5, 'teamB' => 'Belgium'],
-            ['id' => 'L5', 'group' => 'Group L', 'date' => '2026-06-27T21:00:00Z', 'matchNumber' => 67, 'teamA' => 'Panama', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'England'],
-            ['id' => 'L6', 'group' => 'Group L', 'date' => '2026-06-27T21:00:00Z', 'matchNumber' => 68, 'teamA' => 'Croatia', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Ghana'],
-            ['id' => 'K5', 'group' => 'Group K', 'date' => '2026-06-27T23:30:00Z', 'matchNumber' => 71, 'teamA' => 'Colombia', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Portugal'],
-            ['id' => 'K6', 'group' => 'Group K', 'date' => '2026-06-27T23:30:00Z', 'matchNumber' => 72, 'teamA' => 'Uzbekistan', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'DR Congo'],
+            ['id' => 'L5', 'group' => 'Group L', 'date' => '2026-06-27T21:00:00Z', 'matchNumber' => 67, 'teamA' => 'Panama', 'teamAGoals' => 0, 'teamBGoals' => 2, 'teamB' => 'England'],
+            ['id' => 'L6', 'group' => 'Group L', 'date' => '2026-06-27T21:00:00Z', 'matchNumber' => 68, 'teamA' => 'Croatia', 'teamAGoals' => 2, 'teamBGoals' => 1, 'teamB' => 'Ghana'],
+            ['id' => 'K5', 'group' => 'Group K', 'date' => '2026-06-27T23:30:00Z', 'matchNumber' => 71, 'teamA' => 'Colombia', 'teamAGoals' => 0, 'teamBGoals' => 0, 'teamB' => 'Portugal'],
+            ['id' => 'K6', 'group' => 'Group K', 'date' => '2026-06-27T23:30:00Z', 'matchNumber' => 72, 'teamA' => 'Uzbekistan', 'teamAGoals' => 1, 'teamBGoals' => 3, 'teamB' => 'DR Congo'],
             ['id' => 'J5', 'group' => 'Group J', 'date' => '2026-06-28T02:00:00Z', 'matchNumber' => 69, 'teamA' => 'Algeria', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Austria'],
             ['id' => 'J6', 'group' => 'Group J', 'date' => '2026-06-28T02:00:00Z', 'matchNumber' => 70, 'teamA' => 'Jordan', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Argentina'],
             ['id' => 'R32_1', 'group' => 'Round of 32', 'date' => '2026-06-28T19:00:00Z', 'matchNumber' => 73, 'teamA' => 'South Africa', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Canada'],
@@ -264,9 +264,9 @@ final class WcMatches
 
     public static function roundDeadline(string $stage): CarbonImmutable
     {
-        $matches = array_values(array_filter(self::all(), fn (array $match): bool => $match['group'] === $stage));
+        $matches = array_values(array_filter(self::all(), fn(array $match): bool => $match['group'] === $stage));
 
-        usort($matches, fn (array $a, array $b): int => strcmp($a['date'], $b['date'])
+        usort($matches, fn(array $a, array $b): int => strcmp($a['date'], $b['date'])
             ?: ($a['matchNumber'] <=> $b['matchNumber']));
 
         return self::kickoff($matches[0])->subHour();
