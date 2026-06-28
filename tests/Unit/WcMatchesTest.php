@@ -93,10 +93,20 @@ class WcMatchesTest extends TestCase
         $this->assertSame('Canada', $matchesById['R32_1']['teamB']);
         $this->assertSame('Brazil', $matchesById['R32_4']['teamA']);
         $this->assertSame('Japan', $matchesById['R32_4']['teamB']);
+        $this->assertSame('Mexico', $matchesById['R32_7']['teamA']);
+        $this->assertSame('Ecuador', $matchesById['R32_7']['teamB']);
+        $this->assertSame('England', $matchesById['R32_8']['teamA']);
+        $this->assertSame('DR Congo', $matchesById['R32_8']['teamB']);
         $this->assertSame('United States', $matchesById['R32_9']['teamA']);
         $this->assertSame('Bosnia and Herzegovina', $matchesById['R32_9']['teamB']);
+        $this->assertSame('Belgium', $matchesById['R32_10']['teamA']);
+        $this->assertSame('Senegal', $matchesById['R32_10']['teamB']);
+        $this->assertSame('Portugal', $matchesById['R32_11']['teamA']);
+        $this->assertSame('Croatia', $matchesById['R32_11']['teamB']);
         $this->assertSame('Argentina', $matchesById['R32_14']['teamA']);
         $this->assertSame('Cape Verde', $matchesById['R32_14']['teamB']);
+        $this->assertSame('Colombia', $matchesById['R32_15']['teamA']);
+        $this->assertSame('Ghana', $matchesById['R32_15']['teamB']);
     }
 
     public function test_knockout_deadline_is_one_hour_before_the_round_starts(): void
