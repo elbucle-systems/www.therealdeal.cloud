@@ -200,7 +200,7 @@ final class WcMatches
             ['id' => 'K6', 'group' => 'Group K', 'date' => '2026-06-27T23:30:00Z', 'matchNumber' => 72, 'teamA' => 'Uzbekistan', 'teamAGoals' => 1, 'teamBGoals' => 3, 'teamB' => 'DR Congo'],
             ['id' => 'J5', 'group' => 'Group J', 'date' => '2026-06-28T02:00:00Z', 'matchNumber' => 69, 'teamA' => 'Algeria', 'teamAGoals' => 3, 'teamBGoals' => 3, 'teamB' => 'Austria'],
             ['id' => 'J6', 'group' => 'Group J', 'date' => '2026-06-28T02:00:00Z', 'matchNumber' => 70, 'teamA' => 'Jordan', 'teamAGoals' => 1, 'teamBGoals' => 3, 'teamB' => 'Argentina'],
-            ['id' => 'R32_1', 'group' => 'Round of 32', 'date' => '2026-06-28T19:00:00Z', 'matchNumber' => 73, 'teamA' => 'South Africa', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Canada'],
+            ['id' => 'R32_1', 'group' => 'Round of 32', 'date' => '2026-06-28T19:00:00Z', 'matchNumber' => 73, 'teamA' => 'South Africa', 'teamAGoals' => 0, 'teamBGoals' => 1, 'teamB' => 'Canada'],
             ['id' => 'R32_4', 'group' => 'Round of 32', 'date' => '2026-06-29T17:00:00Z', 'matchNumber' => 76, 'teamA' => 'Brazil', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Japan'],
             ['id' => 'R32_2', 'group' => 'Round of 32', 'date' => '2026-06-29T20:30:00Z', 'matchNumber' => 74, 'teamA' => 'Germany', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Paraguay'],
             ['id' => 'R32_3', 'group' => 'Round of 32', 'date' => '2026-06-30T01:00:00Z', 'matchNumber' => 75, 'teamA' => 'Netherlands', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Morocco'],
