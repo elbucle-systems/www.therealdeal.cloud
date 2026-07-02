@@ -209,7 +209,7 @@ final class WcMatches
             ['id' => 'R32_7', 'group' => 'Round of 32', 'date' => '2026-07-01T01:00:00Z', 'matchNumber' => 79, 'teamA' => 'Mexico', 'teamAGoals' => 2, 'teamBGoals' => 0, 'teamB' => 'Ecuador'],
             ['id' => 'R32_8', 'group' => 'Round of 32', 'date' => '2026-07-01T16:00:00Z', 'matchNumber' => 80, 'teamA' => 'England', 'teamAGoals' => 2, 'teamBGoals' => 1, 'teamB' => 'DR Congo'],
             ['id' => 'R32_10', 'group' => 'Round of 32', 'date' => '2026-07-01T20:00:00Z', 'matchNumber' => 82, 'teamA' => 'Belgium', 'teamAGoals' => 2, 'teamBGoals' => 2, 'teamB' => 'Senegal'],
-            ['id' => 'R32_9', 'group' => 'Round of 32', 'date' => '2026-07-02T00:00:00Z', 'matchNumber' => 81, 'teamA' => 'United States', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Bosnia and Herzegovina'],
+            ['id' => 'R32_9', 'group' => 'Round of 32', 'date' => '2026-07-02T00:00:00Z', 'matchNumber' => 81, 'teamA' => 'United States', 'teamAGoals' => 2, 'teamBGoals' => 0, 'teamB' => 'Bosnia and Herzegovina'],
             ['id' => 'R32_12', 'group' => 'Round of 32', 'date' => '2026-07-02T19:00:00Z', 'matchNumber' => 84, 'teamA' => 'Spain', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Austria'],
             ['id' => 'R32_11', 'group' => 'Round of 32', 'date' => '2026-07-02T23:00:00Z', 'matchNumber' => 83, 'teamA' => 'Portugal', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Croatia'],
             ['id' => 'R32_13', 'group' => 'Round of 32', 'date' => '2026-07-03T03:00:00Z', 'matchNumber' => 85, 'teamA' => 'Switzerland', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Argelia'],
