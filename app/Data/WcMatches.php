@@ -224,7 +224,7 @@ final class WcMatches
             ['id' => 'R16_6', 'group' => 'Round of 16', 'date' => '2026-07-07T00:00:00Z', 'matchNumber' => 94, 'teamA' => 'United States', 'teamAGoals' => 1, 'teamBGoals' => 4, 'teamB' => 'Belgium'],
             ['id' => 'R16_7', 'group' => 'Round of 16', 'date' => '2026-07-07T16:00:00Z', 'matchNumber' => 95, 'teamA' => 'Argentina', 'teamAGoals' => 3, 'teamBGoals' => 2, 'teamB' => 'Egypt'],
             ['id' => 'R16_8', 'group' => 'Round of 16', 'date' => '2026-07-07T20:00:00Z', 'matchNumber' => 96, 'teamA' => 'Switzerland', 'teamAGoals' => 0, 'teamBGoals' => 0, 'teamB' => 'Colombia'],
-            ['id' => 'QF1', 'group' => 'Quarterfinals', 'date' => '2026-07-09T20:00:00Z', 'matchNumber' => 97, 'teamA' => 'France', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Morocco'],
+            ['id' => 'QF1', 'group' => 'Quarterfinals', 'date' => '2026-07-09T20:00:00Z', 'matchNumber' => 97, 'teamA' => 'France', 'teamAGoals' => 2, 'teamBGoals' => 0, 'teamB' => 'Morocco'],
             ['id' => 'QF2', 'group' => 'Quarterfinals', 'date' => '2026-07-10T19:00:00Z', 'matchNumber' => 98, 'teamA' => 'Spain', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Belgium'],
             ['id' => 'QF3', 'group' => 'Quarterfinals', 'date' => '2026-07-11T21:00:00Z', 'matchNumber' => 99, 'teamA' => 'Norway', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'England'],
             ['id' => 'QF4', 'group' => 'Quarterfinals', 'date' => '2026-07-12T01:00:00Z', 'matchNumber' => 100, 'teamA' => 'Argentina', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Switzerland'],
