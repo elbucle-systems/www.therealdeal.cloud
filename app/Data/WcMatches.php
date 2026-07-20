@@ -230,8 +230,8 @@ final class WcMatches
             ['id' => 'QF4', 'group' => 'Quarterfinals', 'date' => '2026-07-12T01:00:00Z', 'matchNumber' => 100, 'teamA' => 'Argentina', 'teamAGoals' => 1, 'teamBGoals' => 1, 'teamB' => 'Switzerland'],
             ['id' => 'SF1', 'group' => 'Semifinals', 'date' => '2026-07-14T19:00:00Z', 'matchNumber' => 101, 'teamA' => 'France', 'teamAGoals' => 0, 'teamBGoals' => 2, 'teamB' => 'Spain'],
             ['id' => 'SF2', 'group' => 'Semifinals', 'date' => '2026-07-15T19:00:00Z', 'matchNumber' => 102, 'teamA' => 'England', 'teamAGoals' => 1, 'teamBGoals' => 2, 'teamB' => 'Argentina'],
-            ['id' => 'TP1', 'group' => 'Third Place', 'date' => '2026-07-18T21:00:00Z', 'matchNumber' => 103, 'teamA' => 'France', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'England'],
-            ['id' => 'FINAL', 'group' => 'Final', 'date' => '2026-07-19T19:00:00Z', 'matchNumber' => 104, 'teamA' => 'Spain', 'teamAGoals' => null, 'teamBGoals' => null, 'teamB' => 'Argentina'],
+            ['id' => 'TP1', 'group' => 'Third Place', 'date' => '2026-07-18T21:00:00Z', 'matchNumber' => 103, 'teamA' => 'France', 'teamAGoals' => 4, 'teamBGoals' => 6, 'teamB' => 'England'],
+            ['id' => 'FINAL', 'group' => 'Final', 'date' => '2026-07-19T19:00:00Z', 'matchNumber' => 104, 'teamA' => 'Spain', 'teamAGoals' => 0, 'teamBGoals' => 0, 'teamB' => 'Argentina'],
         ];
     }
 
